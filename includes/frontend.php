@@ -9,6 +9,10 @@ function push_notification_enqueue_scripts() {
     ));
 }
 
+function push_notification_add_manifest() {
+    echo '<link rel="manifest" href="' . PUSH_NOTIFICATION_PLUGIN_URL . 'manifest.json">';
+}
+
 function push_notification_add_service_worker() {
     echo '<script>
         if ("serviceWorker" in navigator) {
