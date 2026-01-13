@@ -31,17 +31,41 @@ function push_notification_meta_box_callback($post) {
     wp_nonce_field('push_notification_meta_box', 'push_notification_meta_box_nonce');
 
     $title = get_post_meta($post->ID, '_push_notification_title', true);
+    $title_b = get_post_meta($post->ID, '_push_notification_title_b', true);
     $body = get_post_meta($post->ID, '_push_notification_body', true);
+    $body_b = get_post_meta($post->ID, '_push_notification_body_b', true);
     $icon = get_post_meta($post->ID, '_push_notification_icon', true);
     $image = get_post_meta($post->ID, '_push_notification_image', true);
+    $image_b = get_post_meta($post->ID, '_push_notification_image_b', true);
     $action_title = get_post_meta($post->ID, '_push_notification_action_title', true);
+    $action_title_b = get_post_meta($post->ID, '_push_notification_action_title_b', true);
     $action_url = get_post_meta($post->ID, '_push_notification_action_url', true);
 
+    echo '<h3>Version A (Control)</h3>';
     echo '<p><label for="push_notification_title">Custom Title (leave empty to use post title):</label></p>';
     echo '<input type="text" id="push_notification_title" name="push_notification_title" value="' . esc_attr($title) . '" style="width:100%;" />';
 
     echo '<p><label for="push_notification_body">Body:</label></p>';
     echo '<textarea id="push_notification_body" name="push_notification_body" rows="3" style="width:100%;">' . esc_textarea($body) . '</textarea>';
+
+    echo '<p><label for="push_notification_image">Image URL:</label></p>';
+    echo '<input type="url" id="push_notification_image" name="push_notification_image" value="' . esc_attr($image) . '" style="width:100%;" />';
+
+    echo '<p><label for="push_notification_action_title">Action Button Title:</label></p>';
+    echo '<input type="text" id="push_notification_action_title" name="push_notification_action_title" value="' . esc_attr($action_title) . '" style="width:100%;" />';
+
+    echo '<h3>Version B (Variant)</h3>';
+    echo '<p><label for="push_notification_title_b">Custom Title B:</label></p>';
+    echo '<input type="text" id="push_notification_title_b" name="push_notification_title_b" value="' . esc_attr($title_b) . '" style="width:100%;" />';
+
+    echo '<p><label for="push_notification_body_b">Body B:</label></p>';
+    echo '<textarea id="push_notification_body_b" name="push_notification_body_b" rows="3" style="width:100%;">' . esc_textarea($body_b) . '</textarea>';
+
+    echo '<p><label for="push_notification_image_b">Image URL B:</label></p>';
+    echo '<input type="url" id="push_notification_image_b" name="push_notification_image_b" value="' . esc_attr($image_b) . '" style="width:100%;" />';
+
+    echo '<p><label for="push_notification_action_title_b">Action Button Title B:</label></p>';
+    echo '<input type="text" id="push_notification_action_title_b" name="push_notification_action_title_b" value="' . esc_attr($action_title_b) . '" style="width:100%;" />';
 
     echo '<p><label for="push_notification_icon">Icon URL:</label></p>';
     echo '<input type="url" id="push_notification_icon" name="push_notification_icon" value="' . esc_attr($icon) . '" style="width:100%;" />';
@@ -69,8 +93,16 @@ function push_notification_save_meta_boxes($post_id) {
         update_post_meta($post_id, '_push_notification_title', sanitize_text_field($_POST['push_notification_title']));
     }
 
+    if (isset($_POST['push_notification_title_b'])) {
+        update_post_meta($post_id, '_push_notification_title_b', sanitize_text_field($_POST['push_notification_title_b']));
+    }
+
     if (isset($_POST['push_notification_body'])) {
         update_post_meta($post_id, '_push_notification_body', sanitize_textarea_field($_POST['push_notification_body']));
+    }
+
+    if (isset($_POST['push_notification_body_b'])) {
+        update_post_meta($post_id, '_push_notification_body_b', sanitize_textarea_field($_POST['push_notification_body_b']));
     }
 
     if (isset($_POST['push_notification_icon'])) {
@@ -81,8 +113,16 @@ function push_notification_save_meta_boxes($post_id) {
         update_post_meta($post_id, '_push_notification_image', esc_url_raw($_POST['push_notification_image']));
     }
 
+    if (isset($_POST['push_notification_image_b'])) {
+        update_post_meta($post_id, '_push_notification_image_b', esc_url_raw($_POST['push_notification_image_b']));
+    }
+
     if (isset($_POST['push_notification_action_title'])) {
         update_post_meta($post_id, '_push_notification_action_title', sanitize_text_field($_POST['push_notification_action_title']));
+    }
+
+    if (isset($_POST['push_notification_action_title_b'])) {
+        update_post_meta($post_id, '_push_notification_action_title_b', sanitize_text_field($_POST['push_notification_action_title_b']));
     }
 
     if (isset($_POST['push_notification_action_url'])) {

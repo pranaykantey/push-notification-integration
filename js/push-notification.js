@@ -41,8 +41,9 @@ jQuery(document).ready(function($) {
             alert('Please accept notifications consent first.');
             return;
         }
-        var notificationId = jQuery(this).data('id') || 0; // Need to add data-id
-        trackEvent(notificationId, 'button_click');
+        var notificationId = jQuery(this).data('id') || 0;
+        var variant = jQuery(this).data('variant') || 'A';
+        trackEvent(notificationId, 'button_click', variant);
 
         var data = {
             title: jQuery(this).data('title'),
@@ -52,11 +53,11 @@ jQuery(document).ready(function($) {
             actionTitle: jQuery(this).data('action-title'),
             actionUrl: jQuery(this).data('action-url')
         };
-        showPushNotification(data, notificationId);
+        showPushNotification(data, notificationId, variant);
     });
 
     // Show a notification
-    window.showPushNotification = function(data, notificationId) {
+    window.showPushNotification = function(data, notificationId, variant) {
         if (!('Notification' in window)) {
             console.log('This browser does not support notifications.');
             return;
@@ -81,11 +82,11 @@ jQuery(document).ready(function($) {
 
         if (Notification.permission === 'granted') {
             var notification = new Notification(data.title || pushNotificationOptions.defaultTitle, options);
-            trackEvent(notificationId, 'notification_shown');
+            trackEvent(notificationId, 'notification_shown', variant);
 
             // Track action clicks
             notification.onclick = function() {
-                trackEvent(notificationId, 'action_click');
+                trackEvent(notificationId, 'action_click', variant);
                 if (data.actionUrl) {
                     window.open(data.actionUrl);
                 }
@@ -96,10 +97,10 @@ jQuery(document).ready(function($) {
                 if (permission === 'granted') {
                     console.log('Notification permission granted.');
                     var notification = new Notification(data.title || pushNotificationOptions.defaultTitle, options);
-                    trackEvent(notificationId, 'notification_shown');
+                    trackEvent(notificationId, 'notification_shown', variant);
 
                     notification.onclick = function() {
-                        trackEvent(notificationId, 'action_click');
+                        trackEvent(notificationId, 'action_click', variant);
                         if (data.actionUrl) {
                             window.open(data.actionUrl);
                         }
@@ -123,7 +124,7 @@ jQuery(document).ready(function($) {
         if (parts.length == 2) return parts.pop().split(";").shift();
     }
 
-    function trackEvent(notificationId, eventType) {
+    function trackEvent(notificationId, eventType, variant) {
         if (!notificationId) return;
 
         fetch('/wp-json/push-notification/v1/track', {
@@ -134,6 +135,7 @@ jQuery(document).ready(function($) {
             body: JSON.stringify({
                 notification_id: notificationId,
                 event_type: eventType,
+                variant: variant || 'A',
                 session_id: getSessionId()
             })
         }).catch(function(error) {

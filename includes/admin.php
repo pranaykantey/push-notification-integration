@@ -102,11 +102,12 @@ function push_notification_analytics_page() {
             </div>
         </div>
 
-        <h2>Top Performing Notifications</h2>
+        <h2>A/B Testing Results</h2>
         <table class="wp-list-table widefat fixed striped">
             <thead>
                 <tr>
                     <th>Notification</th>
+                    <th>Variant</th>
                     <th>Clicks</th>
                     <th>Shows</th>
                     <th>Actions</th>
@@ -115,28 +116,30 @@ function push_notification_analytics_page() {
             </thead>
             <tbody>
                 <?php
-                $notifications = $wpdb->get_results($wpdb->prepare("
+                $ab_results = $wpdb->get_results($wpdb->prepare("
                     SELECT
                         p.ID,
                         p.post_title,
+                        a.variant,
                         COUNT(CASE WHEN a.event_type = 'button_click' THEN 1 END) as clicks,
                         COUNT(CASE WHEN a.event_type = 'notification_shown' THEN 1 END) as shows,
                         COUNT(CASE WHEN a.event_type = 'action_click' THEN 1 END) as actions
                     FROM {$wpdb->posts} p
                     LEFT JOIN $table_name a ON p.ID = a.notification_id AND DATE(a.timestamp) BETWEEN %s AND %s
-                    WHERE p.post_type = 'push_notification' AND p.post_status = 'publish'
-                    GROUP BY p.ID
-                    ORDER BY clicks DESC
-                    LIMIT 10
+                    WHERE p.post_type = 'push_notification' AND p.post_status = 'publish' AND a.variant IS NOT NULL
+                    GROUP BY p.ID, a.variant
+                    ORDER BY p.ID, a.variant
+                    LIMIT 20
                 ", $start_date, $end_date));
 
-                foreach ($notifications as $notification) {
-                    $ctr = $notification->shows > 0 ? round(($notification->actions / $notification->shows) * 100, 2) : 0;
+                foreach ($ab_results as $result) {
+                    $ctr = $result->shows > 0 ? round(($result->actions / $result->shows) * 100, 2) : 0;
                     echo '<tr>';
-                    echo '<td><a href="' . get_edit_post_link($notification->ID) . '">' . esc_html($notification->post_title) . '</a></td>';
-                    echo '<td>' . $notification->clicks . '</td>';
-                    echo '<td>' . $notification->shows . '</td>';
-                    echo '<td>' . $notification->actions . '</td>';
+                    echo '<td><a href="' . get_edit_post_link($result->ID) . '">' . esc_html($result->post_title) . '</a></td>';
+                    echo '<td>' . esc_html($result->variant) . '</td>';
+                    echo '<td>' . $result->clicks . '</td>';
+                    echo '<td>' . $result->shows . '</td>';
+                    echo '<td>' . $result->actions . '</td>';
                     echo '<td>' . $ctr . '%</td>';
                     echo '</tr>';
                 }

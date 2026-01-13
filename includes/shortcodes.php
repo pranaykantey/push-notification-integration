@@ -54,14 +54,29 @@ function push_notification_shortcode($atts) {
         }
     }
 
-    $title = push_notification_replace_variables(get_post_meta($post->ID, '_push_notification_title', true) ?: $post->post_title);
-    $body = push_notification_replace_variables(get_post_meta($post->ID, '_push_notification_body', true));
+    // A/B testing: randomly select variant
+    $variant = 'A';
+    $title_b = get_post_meta($post->ID, '_push_notification_title_b', true);
+    if (!empty($title_b) && rand(0, 1) === 1) {
+        $variant = 'B';
+    }
+
+    if ($variant === 'B') {
+        $title = push_notification_replace_variables($title_b);
+        $body = push_notification_replace_variables(get_post_meta($post->ID, '_push_notification_body_b', true));
+        $image = get_post_meta($post->ID, '_push_notification_image_b', true);
+        $action_title = push_notification_replace_variables(get_post_meta($post->ID, '_push_notification_action_title_b', true));
+    } else {
+        $title = push_notification_replace_variables(get_post_meta($post->ID, '_push_notification_title', true) ?: $post->post_title);
+        $body = push_notification_replace_variables(get_post_meta($post->ID, '_push_notification_body', true));
+        $image = get_post_meta($post->ID, '_push_notification_image', true);
+        $action_title = push_notification_replace_variables(get_post_meta($post->ID, '_push_notification_action_title', true));
+    }
+
     $icon = get_post_meta($post->ID, '_push_notification_icon', true);
-    $image = get_post_meta($post->ID, '_push_notification_image', true);
-    $action_title = push_notification_replace_variables(get_post_meta($post->ID, '_push_notification_action_title', true));
     $action_url = push_notification_replace_variables(get_post_meta($post->ID, '_push_notification_action_url', true));
 
-    return '<button class="push-notification-btn" data-id="' . $atts['id'] . '" data-title="' . esc_attr($title) . '" data-body="' . esc_attr($body) . '" data-icon="' . esc_attr($icon) . '" data-image="' . esc_attr($image) . '" data-action-title="' . esc_attr($action_title) . '" data-action-url="' . esc_attr($action_url) . '">Show Notification</button>';
+    return '<button class="push-notification-btn" data-id="' . $atts['id'] . '" data-variant="' . $variant . '" data-title="' . esc_attr($title) . '" data-body="' . esc_attr($body) . '" data-icon="' . esc_attr($icon) . '" data-image="' . esc_attr($image) . '" data-action-title="' . esc_attr($action_title) . '" data-action-url="' . esc_attr($action_url) . '">Show Notification</button>';
 }
 
 function push_notifications_list_shortcode() {

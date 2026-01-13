@@ -117,8 +117,9 @@ function push_notification_track_api($request) {
             'user_ip' => push_notification_get_user_ip(),
             'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
             'session_id' => $params['session_id'] ?? '',
+            'variant' => $params['variant'] ?? 'A',
         ),
-        array('%d', '%s', '%d', '%s', '%s', '%s')
+        array('%d', '%s', '%d', '%s', '%s', '%s', '%s')
     );
 
     return array('success' => true);
