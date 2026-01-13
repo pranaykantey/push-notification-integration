@@ -26,6 +26,22 @@ function push_notification_replace_variables($text) {
     return str_replace(array_keys($replacements), array_values($replacements), $text);
 }
 
+function push_notification_get_localized_content($post_id, $field, $lang_code) {
+    $supported_languages = explode(',', get_option('push_notification_supported_languages', 'en'));
+    $supported_languages = array_map('trim', $supported_languages);
+
+    if (in_array($lang_code, $supported_languages) && $lang_code !== 'en') {
+        $localized = get_post_meta($post_id, '_push_notification_' . $field . '_' . $lang_code, true);
+        if (!empty($localized)) {
+            return push_notification_replace_variables($localized);
+        }
+    }
+
+    // Fallback to default
+    $default = get_post_meta($post_id, '_push_notification_' . $field, true);
+    return push_notification_replace_variables($default);
+}
+
 function push_notification_shortcode($atts) {
     $atts = shortcode_atts(array('id' => '', 'roles' => ''), $atts, 'push_notification');
     if (empty($atts['id']) || !is_numeric($atts['id'])) {
@@ -54,6 +70,11 @@ function push_notification_shortcode($atts) {
         }
     }
 
+    // Language detection
+    $user_locale = get_user_locale();
+    $lang = str_replace('_', '-', $user_locale);
+    $lang_code = explode('-', $lang)[0]; // Get language code like 'es' from 'es_ES'
+
     // A/B testing: randomly select variant
     $variant = 'A';
     $title_b = get_post_meta($post->ID, '_push_notification_title_b', true);
@@ -62,15 +83,15 @@ function push_notification_shortcode($atts) {
     }
 
     if ($variant === 'B') {
-        $title = push_notification_replace_variables($title_b);
-        $body = push_notification_replace_variables(get_post_meta($post->ID, '_push_notification_body_b', true));
+        $title = push_notification_get_localized_content($post->ID, 'title_b', $lang_code);
+        $body = push_notification_get_localized_content($post->ID, 'body_b', $lang_code);
         $image = get_post_meta($post->ID, '_push_notification_image_b', true);
-        $action_title = push_notification_replace_variables(get_post_meta($post->ID, '_push_notification_action_title_b', true));
+        $action_title = push_notification_get_localized_content($post->ID, 'action_title_b', $lang_code);
     } else {
-        $title = push_notification_replace_variables(get_post_meta($post->ID, '_push_notification_title', true) ?: $post->post_title);
-        $body = push_notification_replace_variables(get_post_meta($post->ID, '_push_notification_body', true));
+        $title = push_notification_get_localized_content($post->ID, 'title', $lang_code) ?: $post->post_title;
+        $body = push_notification_get_localized_content($post->ID, 'body', $lang_code);
         $image = get_post_meta($post->ID, '_push_notification_image', true);
-        $action_title = push_notification_replace_variables(get_post_meta($post->ID, '_push_notification_action_title', true));
+        $action_title = push_notification_get_localized_content($post->ID, 'action_title', $lang_code);
     }
 
     $icon = get_post_meta($post->ID, '_push_notification_icon', true);

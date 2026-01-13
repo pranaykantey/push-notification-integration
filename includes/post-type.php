@@ -67,6 +67,26 @@ function push_notification_meta_box_callback($post) {
     echo '<p><label for="push_notification_action_title_b">Action Button Title B:</label></p>';
     echo '<input type="text" id="push_notification_action_title_b" name="push_notification_action_title_b" value="' . esc_attr($action_title_b) . '" style="width:100%;" />';
 
+    // Language support
+    $supported_languages = explode(',', get_option('push_notification_supported_languages', 'en'));
+    $supported_languages = array_map('trim', $supported_languages);
+
+    if (count($supported_languages) > 1) {
+        echo '<h3>Translations</h3>';
+        foreach ($supported_languages as $lang) {
+            if ($lang === 'en') continue; // Default is English
+            $title_lang = get_post_meta($post->ID, '_push_notification_title_' . $lang, true);
+            $body_lang = get_post_meta($post->ID, '_push_notification_body_' . $lang, true);
+
+            echo '<h4>' . strtoupper($lang) . '</h4>';
+            echo '<p><label for="push_notification_title_' . $lang . '">Title (' . $lang . '):</label></p>';
+            echo '<input type="text" id="push_notification_title_' . $lang . '" name="push_notification_title_' . $lang . '" value="' . esc_attr($title_lang) . '" style="width:100%;" />';
+
+            echo '<p><label for="push_notification_body_' . $lang . '">Body (' . $lang . '):</label></p>';
+            echo '<textarea id="push_notification_body_' . $lang . '" name="push_notification_body_' . $lang . '" rows="3" style="width:100%;">' . esc_textarea($body_lang) . '</textarea>';
+        }
+    }
+
     echo '<p><label for="push_notification_icon">Icon URL:</label></p>';
     echo '<input type="url" id="push_notification_icon" name="push_notification_icon" value="' . esc_attr($icon) . '" style="width:100%;" />';
 
@@ -127,6 +147,20 @@ function push_notification_save_meta_boxes($post_id) {
 
     if (isset($_POST['push_notification_action_url'])) {
         update_post_meta($post_id, '_push_notification_action_url', esc_url_raw($_POST['push_notification_action_url']));
+    }
+
+    // Save translations
+    $supported_languages = explode(',', get_option('push_notification_supported_languages', 'en'));
+    $supported_languages = array_map('trim', $supported_languages);
+
+    foreach ($supported_languages as $lang) {
+        if ($lang === 'en') continue;
+        if (isset($_POST['push_notification_title_' . $lang])) {
+            update_post_meta($post_id, '_push_notification_title_' . $lang, sanitize_text_field($_POST['push_notification_title_' . $lang]));
+        }
+        if (isset($_POST['push_notification_body_' . $lang])) {
+            update_post_meta($post_id, '_push_notification_body_' . $lang, sanitize_textarea_field($_POST['push_notification_body_' . $lang]));
+        }
     }
 }
 

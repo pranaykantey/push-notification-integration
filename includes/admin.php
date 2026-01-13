@@ -11,14 +11,16 @@ function push_notification_register_settings() {
     register_setting('push_notification_settings', 'push_notification_icon');
     register_setting('push_notification_settings', 'push_notification_auto_new_post');
     register_setting('push_notification_settings', 'push_notification_email_fallback');
+    register_setting('push_notification_settings', 'push_notification_supported_languages');
 
     add_settings_section('push_notification_main', 'Main Settings', null, 'push-notification-settings');
 
     add_settings_field('push_notification_title', 'Default Notification Title', 'push_notification_title_field', 'push-notification-settings', 'push_notification_main');
     add_settings_field('push_notification_body', 'Default Notification Body', 'push_notification_body_field', 'push-notification-settings', 'push_notification_main');
-    add_settings_field('push_notification_icon', 'Notification Icon URL', 'push_notification_icon_field', 'push-notification-settings', 'push_notification_main');
+    add_settings_field('push_notification_icon', 'Notification Icon URL', 'push_notification_icon_field', 'push-notification-settings', 'push-notification_main');
     add_settings_field('push_notification_auto_new_post', 'Auto-show notification for new posts', 'push_notification_auto_new_post_field', 'push-notification-settings', 'push_notification_main');
     add_settings_field('push_notification_email_fallback', 'Email fallback for failed notifications', 'push_notification_email_fallback_field', 'push-notification-settings', 'push_notification_main');
+    add_settings_field('push_notification_supported_languages', 'Supported Languages (comma separated)', 'push_notification_supported_languages_field', 'push-notification-settings', 'push_notification_main');
 }
 
 function push_notification_settings_page() {
@@ -158,4 +160,9 @@ function push_notification_auto_new_post_field() {
 function push_notification_email_fallback_field() {
     $value = get_option('push_notification_email_fallback', '');
     echo '<input type="checkbox" name="push_notification_email_fallback" value="1" ' . checked(1, $value, false) . ' /> Send email fallback when push notifications fail (for logged-in users)';
+}
+
+function push_notification_supported_languages_field() {
+    $value = get_option('push_notification_supported_languages', 'en');
+    echo '<input type="text" name="push_notification_supported_languages" value="' . esc_attr($value) . '" class="regular-text" placeholder="en,es,fr" />';
 }
