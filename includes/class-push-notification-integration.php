@@ -6,6 +6,7 @@ class Push_Notification_Integration {
         add_action('wp_enqueue_scripts', 'push_notification_enqueue_scripts');
         add_action('wp_head', 'push_notification_add_manifest');
         add_action('wp_footer', 'push_notification_add_service_worker');
+        add_action('wp_footer', 'push_notification_consent_banner');
         add_action('admin_menu', 'push_notification_add_admin_menu');
         add_action('admin_init', 'push_notification_register_settings');
         add_action('init', 'push_notification_register_post_type');

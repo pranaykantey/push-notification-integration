@@ -25,3 +25,11 @@ function push_notification_add_service_worker() {
         }
     </script>';
 }
+
+function push_notification_consent_banner() {
+    if (!isset($_COOKIE['push_notification_consent'])) {
+        echo '<div id="push-notification-consent" style="position:fixed;bottom:0;left:0;right:0;background:#000;color:#fff;padding:10px;text-align:center;z-index:1000;">
+            <p>We use push notifications to keep you updated. <button id="accept-notifications" style="background:#007cba;color:#fff;border:none;padding:5px 10px;margin-left:10px;">Accept</button> <button id="decline-notifications" style="background:#ccc;color:#000;border:none;padding:5px 10px;">Decline</button></p>
+        </div>';
+    }
+}
