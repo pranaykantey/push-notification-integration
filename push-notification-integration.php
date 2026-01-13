@@ -27,7 +27,9 @@ require_once plugin_dir_path(__FILE__) . 'includes/post-type.php';
 require_once plugin_dir_path(__FILE__) . 'includes/shortcodes.php';
 require_once plugin_dir_path(__FILE__) . 'includes/activation.php';
 require_once plugin_dir_path(__FILE__) . 'includes/api.php';
-require_once plugin_dir_path(__FILE__) . 'includes/elementor-widget.php';
+if (did_action('elementor/loaded')) {
+    require_once plugin_dir_path(__FILE__) . 'includes/elementor-widget.php';
+}
 require_once plugin_dir_path(__FILE__) . 'includes/block-editor.php';
 
 // Initialize the plugin

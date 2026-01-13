@@ -15,6 +15,7 @@ function push_notification_activation() {
         user_agent text DEFAULT '',
         timestamp datetime DEFAULT CURRENT_TIMESTAMP,
         session_id varchar(100) DEFAULT '',
+        variant varchar(50) DEFAULT '',
         PRIMARY KEY (id),
         KEY notification_id (notification_id),
         KEY event_type (event_type),
