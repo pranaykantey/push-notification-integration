@@ -5,6 +5,16 @@ jQuery(document).ready(function($) {
     jQuery(document).on('click', '#accept-notifications', function() {
         document.cookie = "push_notification_consent=accepted; path=/; max-age=31536000";
         jQuery('#push-notification-consent').hide();
+
+        // Sync to CRM if logged in
+        fetch('/wp-json/push-notification/v1/consent', {
+            method: 'POST',
+            headers: {
+                'X-WP-Nonce': wpApiSettings ? wpApiSettings.nonce : ''
+            }
+        }).catch(function(error) {
+            console.log('CRM sync error:', error);
+        });
     });
 
     jQuery(document).on('click', '#decline-notifications', function() {

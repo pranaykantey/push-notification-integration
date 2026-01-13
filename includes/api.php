@@ -59,6 +59,12 @@ function push_notification_register_api() {
             )
         )
     ));
+
+    register_rest_route('push-notification/v1', '/consent', array(
+        'methods' => 'POST',
+        'callback' => 'push_notification_consent_api',
+        'permission_callback' => 'is_user_logged_in', // Only for logged-in users
+    ));
 }
 
 function push_notification_send_api($request) {
@@ -129,6 +135,57 @@ function push_notification_email_fallback_api($request) {
     $params = $request->get_params();
     push_notification_send_email_fallback($params['notification_id']);
     return array('success' => true);
+}
+
+function push_notification_consent_api($request) {
+    $user_id = get_current_user_id();
+    if (!$user_id) {
+        return new WP_Error('not_logged_in', 'User must be logged in', array('status' => 401));
+    }
+
+    // Sync to CRM
+    push_notification_sync_to_crm($user_id);
+
+    return array('success' => true);
+}
+
+function push_notification_sync_to_crm($user_id) {
+    $api_key = get_option('push_notification_mailchimp_api_key');
+    $list_id = get_option('push_notification_mailchimp_list_id');
+
+    if (!$api_key || !$list_id) {
+        return;
+    }
+
+    $user = get_user_by('id', $user_id);
+    if (!$user) return;
+
+    $data_center = substr($api_key, strpos($api_key, '-') + 1);
+    $url = 'https://' . $data_center . '.api.mailchimp.com/3.0/lists/' . $list_id . '/members/';
+
+    $member_id = md5(strtolower($user->user_email));
+
+    $data = array(
+        'email_address' => $user->user_email,
+        'status' => 'subscribed',
+        'merge_fields' => array(
+            'FNAME' => $user->first_name,
+            'LNAME' => $user->last_name
+        )
+    );
+
+    $response = wp_remote_post($url . $member_id, array(
+        'method' => 'PUT',
+        'headers' => array(
+            'Authorization' => 'Basic ' . base64_encode('user:' . $api_key),
+            'Content-Type' => 'application/json'
+        ),
+        'body' => json_encode($data)
+    ));
+
+    if (is_wp_error($response)) {
+        error_log('Mailchimp sync error: ' . $response->get_error_message());
+    }
 }
 
 function push_notification_send_email_fallback($notification_id, $user_id = null) {

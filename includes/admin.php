@@ -21,6 +21,10 @@ function push_notification_register_settings() {
     add_settings_field('push_notification_auto_new_post', 'Auto-show notification for new posts', 'push_notification_auto_new_post_field', 'push-notification-settings', 'push_notification_main');
     add_settings_field('push_notification_email_fallback', 'Email fallback for failed notifications', 'push_notification_email_fallback_field', 'push-notification-settings', 'push_notification_main');
     add_settings_field('push_notification_supported_languages', 'Supported Languages (comma separated)', 'push_notification_supported_languages_field', 'push-notification-settings', 'push_notification_main');
+
+    add_settings_section('push_notification_crm', 'CRM Integration', null, 'push-notification-settings');
+    add_settings_field('push_notification_mailchimp_api_key', 'Mailchimp API Key', 'push_notification_mailchimp_api_key_field', 'push-notification-settings', 'push_notification_crm');
+    add_settings_field('push_notification_mailchimp_list_id', 'Mailchimp Audience ID', 'push_notification_mailchimp_list_id_field', 'push-notification-settings', 'push_notification_crm');
 }
 
 function push_notification_settings_page() {
@@ -165,4 +169,16 @@ function push_notification_email_fallback_field() {
 function push_notification_supported_languages_field() {
     $value = get_option('push_notification_supported_languages', 'en');
     echo '<input type="text" name="push_notification_supported_languages" value="' . esc_attr($value) . '" class="regular-text" placeholder="en,es,fr" />';
+}
+
+function push_notification_mailchimp_api_key_field() {
+    $value = get_option('push_notification_mailchimp_api_key', '');
+    echo '<input type="password" name="push_notification_mailchimp_api_key" value="' . esc_attr($value) . '" class="regular-text" />';
+    echo '<p class="description">Enter your Mailchimp API key to sync users who consent to notifications.</p>';
+}
+
+function push_notification_mailchimp_list_id_field() {
+    $value = get_option('push_notification_mailchimp_list_id', '');
+    echo '<input type="text" name="push_notification_mailchimp_list_id" value="' . esc_attr($value) . '" class="regular-text" />';
+    echo '<p class="description">Enter the Audience/List ID to add consented users to.</p>';
 }
