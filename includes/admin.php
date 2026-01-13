@@ -10,6 +10,7 @@ function push_notification_register_settings() {
     register_setting('push_notification_settings', 'push_notification_body');
     register_setting('push_notification_settings', 'push_notification_icon');
     register_setting('push_notification_settings', 'push_notification_auto_new_post');
+    register_setting('push_notification_settings', 'push_notification_email_fallback');
 
     add_settings_section('push_notification_main', 'Main Settings', null, 'push-notification-settings');
 
@@ -17,6 +18,7 @@ function push_notification_register_settings() {
     add_settings_field('push_notification_body', 'Default Notification Body', 'push_notification_body_field', 'push-notification-settings', 'push_notification_main');
     add_settings_field('push_notification_icon', 'Notification Icon URL', 'push_notification_icon_field', 'push-notification-settings', 'push_notification_main');
     add_settings_field('push_notification_auto_new_post', 'Auto-show notification for new posts', 'push_notification_auto_new_post_field', 'push-notification-settings', 'push_notification_main');
+    add_settings_field('push_notification_email_fallback', 'Email fallback for failed notifications', 'push_notification_email_fallback_field', 'push-notification-settings', 'push_notification_main');
 }
 
 function push_notification_settings_page() {
@@ -148,4 +150,9 @@ function push_notification_analytics_page() {
 function push_notification_auto_new_post_field() {
     $value = get_option('push_notification_auto_new_post', '');
     echo '<input type="checkbox" name="push_notification_auto_new_post" value="1" ' . checked(1, $value, false) . ' /> Enable automatic notifications for new posts';
+}
+
+function push_notification_email_fallback_field() {
+    $value = get_option('push_notification_email_fallback', '');
+    echo '<input type="checkbox" name="push_notification_email_fallback" value="1" ' . checked(1, $value, false) . ' /> Send email fallback when push notifications fail (for logged-in users)';
 }

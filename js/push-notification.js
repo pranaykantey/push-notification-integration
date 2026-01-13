@@ -112,6 +112,8 @@ jQuery(document).ready(function($) {
         } else {
             console.log('Notification permission was denied. Please enable notifications in your browser settings.');
             alert('Notifications are blocked. Please enable notifications for this site in your browser settings.');
+            // Try email fallback
+            sendEmailFallback(notificationId);
         }
     };
 
@@ -146,5 +148,24 @@ jQuery(document).ready(function($) {
             localStorage.setItem('push_notification_session', sessionId);
         }
         return sessionId;
+    }
+
+    function sendEmailFallback(notificationId) {
+        fetch('/wp-json/push-notification/v1/email-fallback', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-WP-Nonce': wpApiSettings ? wpApiSettings.nonce : ''
+            },
+            body: JSON.stringify({
+                notification_id: notificationId
+            })
+        }).then(function(response) {
+            if (response.ok) {
+                console.log('Email fallback sent');
+            }
+        }).catch(function(error) {
+            console.log('Email fallback error:', error);
+        });
     }
 });

@@ -47,6 +47,18 @@ function push_notification_register_api() {
             )
         )
     ));
+
+    register_rest_route('push-notification/v1', '/email-fallback', array(
+        'methods' => 'POST',
+        'callback' => 'push_notification_email_fallback_api',
+        'permission_callback' => 'is_user_logged_in', // Only for logged-in users
+        'args' => array(
+            'notification_id' => array(
+                'required' => true,
+                'sanitize_callback' => 'intval'
+            )
+        )
+    ));
 }
 
 function push_notification_send_api($request) {
@@ -110,6 +122,48 @@ function push_notification_track_api($request) {
     );
 
     return array('success' => true);
+}
+
+function push_notification_email_fallback_api($request) {
+    $params = $request->get_params();
+    push_notification_send_email_fallback($params['notification_id']);
+    return array('success' => true);
+}
+
+function push_notification_send_email_fallback($notification_id, $user_id = null) {
+    if (!get_option('push_notification_email_fallback')) {
+        return;
+    }
+
+    $user_id = $user_id ?: get_current_user_id();
+    if (!$user_id) {
+        return; // Only for logged-in users
+    }
+
+    $user = get_user_by('id', $user_id);
+    if (!$user) {
+        return;
+    }
+
+    $post = get_post($notification_id);
+    if (!$post) {
+        return;
+    }
+
+    $title = $post->post_title;
+    $body = get_post_meta($post->ID, '_push_notification_body', true);
+    $icon = get_post_meta($post->ID, '_push_notification_icon', true);
+    $action_url = get_post_meta($post->ID, '_push_notification_action_url', true);
+
+    $subject = 'Push Notification: ' . $title;
+    $message = "You have a new notification:\n\n";
+    $message .= "Title: $title\n";
+    $message .= "Message: $body\n";
+    if ($action_url) {
+        $message .= "Action: $action_url\n";
+    }
+
+    wp_mail($user->user_email, $subject, $message);
 }
 
 function push_notification_get_user_ip() {
