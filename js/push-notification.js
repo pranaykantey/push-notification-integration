@@ -41,6 +41,9 @@ jQuery(document).ready(function($) {
             alert('Please accept notifications consent first.');
             return;
         }
+        var notificationId = jQuery(this).data('id') || 0; // Need to add data-id
+        trackEvent(notificationId, 'button_click');
+
         var data = {
             title: jQuery(this).data('title'),
             body: jQuery(this).data('body'),
@@ -49,11 +52,11 @@ jQuery(document).ready(function($) {
             actionTitle: jQuery(this).data('action-title'),
             actionUrl: jQuery(this).data('action-url')
         };
-        showPushNotification(data);
+        showPushNotification(data, notificationId);
     });
 
     // Show a notification
-    window.showPushNotification = function(data) {
+    window.showPushNotification = function(data, notificationId) {
         if (!('Notification' in window)) {
             console.log('This browser does not support notifications.');
             return;
@@ -73,17 +76,34 @@ jQuery(document).ready(function($) {
                 action: 'view',
                 title: data.actionTitle
             }];
-            options.data = { url: data.actionUrl };
+            options.data = { url: data.actionUrl, notificationId: notificationId };
         }
 
         if (Notification.permission === 'granted') {
-            new Notification(data.title || pushNotificationOptions.defaultTitle, options);
+            var notification = new Notification(data.title || pushNotificationOptions.defaultTitle, options);
+            trackEvent(notificationId, 'notification_shown');
+
+            // Track action clicks
+            notification.onclick = function() {
+                trackEvent(notificationId, 'action_click');
+                if (data.actionUrl) {
+                    window.open(data.actionUrl);
+                }
+            };
         } else if (Notification.permission !== 'denied') {
             // Request permission
             Notification.requestPermission().then(function(permission) {
                 if (permission === 'granted') {
                     console.log('Notification permission granted.');
-                    new Notification(data.title || pushNotificationOptions.defaultTitle, options);
+                    var notification = new Notification(data.title || pushNotificationOptions.defaultTitle, options);
+                    trackEvent(notificationId, 'notification_shown');
+
+                    notification.onclick = function() {
+                        trackEvent(notificationId, 'action_click');
+                        if (data.actionUrl) {
+                            window.open(data.actionUrl);
+                        }
+                    };
                 } else {
                     console.log('Notification permission denied.');
                     alert('Notifications are blocked. Please enable notifications for this site in your browser settings.');
@@ -99,5 +119,32 @@ jQuery(document).ready(function($) {
         var value = "; " + document.cookie;
         var parts = value.split("; " + name + "=");
         if (parts.length == 2) return parts.pop().split(";").shift();
+    }
+
+    function trackEvent(notificationId, eventType) {
+        if (!notificationId) return;
+
+        fetch('/wp-json/push-notification/v1/track', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                notification_id: notificationId,
+                event_type: eventType,
+                session_id: getSessionId()
+            })
+        }).catch(function(error) {
+            console.log('Tracking error:', error);
+        });
+    }
+
+    function getSessionId() {
+        var sessionId = localStorage.getItem('push_notification_session');
+        if (!sessionId) {
+            sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            localStorage.setItem('push_notification_session', sessionId);
+        }
+        return sessionId;
     }
 });

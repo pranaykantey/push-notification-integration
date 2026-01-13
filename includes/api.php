@@ -28,6 +28,25 @@ function push_notification_register_api() {
             )
         )
     ));
+
+    register_rest_route('push-notification/v1', '/track', array(
+        'methods' => 'POST',
+        'callback' => 'push_notification_track_api',
+        'permission_callback' => '__return_true', // Allow tracking from frontend
+        'args' => array(
+            'notification_id' => array(
+                'required' => true,
+                'sanitize_callback' => 'intval'
+            ),
+            'event_type' => array(
+                'required' => true,
+                'sanitize_callback' => 'sanitize_text_field'
+            ),
+            'session_id' => array(
+                'sanitize_callback' => 'sanitize_text_field'
+            )
+        )
+    ));
 }
 
 function push_notification_send_api($request) {
@@ -71,6 +90,38 @@ function push_notification_order_status_changed($order_id, $old_status, $new_sta
 }
 
 // Hook for custom triggers
+function push_notification_track_api($request) {
+    global $wpdb;
+    $table_name = $wpdb->prefix . 'push_notification_analytics';
+
+    $params = $request->get_params();
+
+    $wpdb->insert(
+        $table_name,
+        array(
+            'notification_id' => $params['notification_id'],
+            'event_type' => $params['event_type'],
+            'user_id' => get_current_user_id(),
+            'user_ip' => push_notification_get_user_ip(),
+            'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
+            'session_id' => $params['session_id'] ?? '',
+        ),
+        array('%d', '%s', '%d', '%s', '%s', '%s')
+    );
+
+    return array('success' => true);
+}
+
+function push_notification_get_user_ip() {
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        return $_SERVER['HTTP_CLIENT_IP'];
+    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        return $_SERVER['HTTP_X_FORWARDED_FOR'];
+    } else {
+        return $_SERVER['REMOTE_ADDR'] ?? '';
+    }
+}
+
 function push_notification_trigger($data) {
     set_transient('push_notification_api', $data, 300);
     do_action('push_notification_triggered', $data);
