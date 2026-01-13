@@ -23,6 +23,9 @@ class Push_Notification_Integration {
         add_action('wp_footer', array($this, 'add_service_worker'));
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_init', array($this, 'register_settings'));
+        add_action('init', array($this, 'register_post_type'));
+        add_action('add_meta_boxes', array($this, 'add_meta_boxes'));
+        add_action('save_post', array($this, 'save_meta_boxes'));
     }
 
     public function enqueue_scripts() {
@@ -78,6 +81,64 @@ class Push_Notification_Integration {
     public function icon_field() {
         $value = get_option('push_notification_icon', '');
         echo '<input type="url" name="push_notification_icon" value="' . esc_attr($value) . '" class="regular-text" />';
+    }
+
+    public function register_post_type() {
+        register_post_type('push_notification', array(
+            'label' => 'Push Notifications',
+            'public' => false,
+            'show_ui' => true,
+            'show_in_menu' => true,
+            'menu_icon' => 'dashicons-bell',
+            'supports' => array('title'),
+            'labels' => array(
+                'name' => 'Push Notifications',
+                'singular_name' => 'Push Notification',
+                'add_new' => 'Add New',
+                'add_new_item' => 'Add New Push Notification',
+                'edit_item' => 'Edit Push Notification',
+                'new_item' => 'New Push Notification',
+                'view_item' => 'View Push Notification',
+                'search_items' => 'Search Push Notifications',
+                'not_found' => 'No push notifications found',
+                'not_found_in_trash' => 'No push notifications found in trash',
+            ),
+        ));
+    }
+
+    public function add_meta_boxes() {
+        add_meta_box('push_notification_details', 'Notification Details', array($this, 'meta_box_callback'), 'push_notification', 'normal', 'high');
+    }
+
+    public function meta_box_callback($post) {
+        wp_nonce_field('push_notification_meta_box', 'push_notification_meta_box_nonce');
+
+        $body = get_post_meta($post->ID, '_push_notification_body', true);
+        $icon = get_post_meta($post->ID, '_push_notification_icon', true);
+
+        echo '<p><label for="push_notification_body">Body:</label></p>';
+        echo '<textarea id="push_notification_body" name="push_notification_body" rows="3" style="width:100%;">' . esc_textarea($body) . '</textarea>';
+
+        echo '<p><label for="push_notification_icon">Icon URL:</label></p>';
+        echo '<input type="url" id="push_notification_icon" name="push_notification_icon" value="' . esc_attr($icon) . '" style="width:100%;" />';
+    }
+
+    public function save_meta_boxes($post_id) {
+        if (!isset($_POST['push_notification_meta_box_nonce']) || !wp_verify_nonce($_POST['push_notification_meta_box_nonce'], 'push_notification_meta_box')) {
+            return;
+        }
+
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+
+        if (isset($_POST['push_notification_body'])) {
+            update_post_meta($post_id, '_push_notification_body', sanitize_textarea_field($_POST['push_notification_body']));
+        }
+
+        if (isset($_POST['push_notification_icon'])) {
+            update_post_meta($post_id, '_push_notification_icon', esc_url_raw($_POST['push_notification_icon']));
+        }
     }
 
     public function add_service_worker() {
