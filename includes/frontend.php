@@ -1,6 +1,7 @@
 <?php
 
 function push_notification_enqueue_scripts() {
+    wp_enqueue_style('push-notification-css', PUSH_NOTIFICATION_PLUGIN_URL . 'css/push-notification.css', array(), '1.0.0');
     wp_enqueue_script('push-notification-js', PUSH_NOTIFICATION_PLUGIN_URL . 'js/push-notification.js', array('jquery'), '1.0.0', true);
     wp_localize_script('push-notification-js', 'pushNotificationOptions', array(
         'defaultTitle' => get_option('push_notification_title', 'Push Notification'),

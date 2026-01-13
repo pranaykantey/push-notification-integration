@@ -1,0 +1,90 @@
+/* Push Notification Styles */
+
+.push-notification-btn {
+    background-color: #007cba;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.push-notification-btn:hover {
+    background-color: #005a87;
+}
+
+.push-notification-consent {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #000;
+    color: #fff;
+    padding: 15px;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+}
+
+.push-notification-consent button {
+    margin: 0 10px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.push-notification-consent button:first-of-type {
+    background: #007cba;
+    color: #fff;
+}
+
+.push-notification-consent button:first-of-type:hover {
+    background: #005a87;
+}
+
+.push-notification-consent button:last-of-type {
+    background: #ccc;
+    color: #000;
+}
+
+.push-notification-consent button:last-of-type:hover {
+    background: #999;
+}
+
+.push-notifications-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.push-notifications-table th,
+.push-notifications-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.push-notifications-table th {
+    background-color: #f2f2f2;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .push-notification-btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .push-notification-consent {
+        padding: 10px;
+    }
+
+    .push-notification-consent button {
+        display: block;
+        width: 100%;
+        margin: 5px 0;
+    }
+}
