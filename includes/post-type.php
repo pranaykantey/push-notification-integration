@@ -30,11 +30,15 @@ function push_notification_add_meta_boxes() {
 function push_notification_meta_box_callback($post) {
     wp_nonce_field('push_notification_meta_box', 'push_notification_meta_box_nonce');
 
+    $title = get_post_meta($post->ID, '_push_notification_title', true);
     $body = get_post_meta($post->ID, '_push_notification_body', true);
     $icon = get_post_meta($post->ID, '_push_notification_icon', true);
     $image = get_post_meta($post->ID, '_push_notification_image', true);
     $action_title = get_post_meta($post->ID, '_push_notification_action_title', true);
     $action_url = get_post_meta($post->ID, '_push_notification_action_url', true);
+
+    echo '<p><label for="push_notification_title">Custom Title (leave empty to use post title):</label></p>';
+    echo '<input type="text" id="push_notification_title" name="push_notification_title" value="' . esc_attr($title) . '" style="width:100%;" />';
 
     echo '<p><label for="push_notification_body">Body:</label></p>';
     echo '<textarea id="push_notification_body" name="push_notification_body" rows="3" style="width:100%;">' . esc_textarea($body) . '</textarea>';
@@ -59,6 +63,10 @@ function push_notification_save_meta_boxes($post_id) {
 
     if (!current_user_can('edit_post', $post_id)) {
         return;
+    }
+
+    if (isset($_POST['push_notification_title'])) {
+        update_post_meta($post_id, '_push_notification_title', sanitize_text_field($_POST['push_notification_title']));
     }
 
     if (isset($_POST['push_notification_body'])) {
