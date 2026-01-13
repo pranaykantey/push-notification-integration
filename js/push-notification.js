@@ -1,18 +1,6 @@
 // Push Notification Integration JavaScript with jQuery
 
 jQuery(document).ready(function($) {
-    // Check if browser supports notifications
-    if ('Notification' in window) {
-        // Request permission
-        Notification.requestPermission().then(function(permission) {
-            if (permission === 'granted') {
-                console.log('Notification permission granted.');
-            } else {
-                console.log('Notification permission denied.');
-            }
-        });
-    }
-
     // Handle button clicks for push notifications
     jQuery(document).on('click', '.push-notification-btn', function() {
         var title = jQuery(this).data('title');
@@ -21,9 +9,13 @@ jQuery(document).ready(function($) {
         showPushNotification(title, body, icon);
     });
 
-    // Example: Show a notification on button click (you can add a button in your theme)
-    // This is just a demo; integrate as needed
+    // Show a notification
     window.showPushNotification = function(title, body, icon) {
+        if (!('Notification' in window)) {
+            console.log('This browser does not support notifications.');
+            return;
+        }
+
         if (Notification.permission === 'granted') {
             title = title || pushNotificationOptions.defaultTitle;
             body = body || pushNotificationOptions.defaultBody;
@@ -32,6 +24,24 @@ jQuery(document).ready(function($) {
                 body: body,
                 icon: icon
             });
+        } else if (Notification.permission !== 'denied') {
+            // Request permission
+            Notification.requestPermission().then(function(permission) {
+                if (permission === 'granted') {
+                    console.log('Notification permission granted.');
+                    title = title || pushNotificationOptions.defaultTitle;
+                    body = body || pushNotificationOptions.defaultBody;
+                    icon = icon || pushNotificationOptions.iconUrl;
+                    new Notification(title, {
+                        body: body,
+                        icon: icon
+                    });
+                } else {
+                    console.log('Notification permission denied.');
+                }
+            });
+        } else {
+            console.log('Notification permission was denied. Please enable notifications in your browser settings.');
         }
     };
 });
