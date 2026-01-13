@@ -28,6 +28,8 @@ class Push_Notification_Integration {
         add_action('save_post', array($this, 'save_meta_boxes'));
         add_shortcode('push_notification', array($this, 'push_notification_shortcode'));
         add_shortcode('push_notifications_list', array($this, 'push_notifications_list_shortcode'));
+        add_filter('manage_push_notification_posts_columns', array($this, 'add_shortcode_column'));
+        add_action('manage_push_notification_posts_custom_column', array($this, 'shortcode_column_content'), 10, 2);
     }
 
     public function enqueue_scripts() {
@@ -192,6 +194,17 @@ class Push_Notification_Integration {
         $output .= '</tbody></table>';
 
         return $output;
+    }
+
+    public function add_shortcode_column($columns) {
+        $columns['shortcode'] = 'Shortcode';
+        return $columns;
+    }
+
+    public function shortcode_column_content($column, $post_id) {
+        if ($column === 'shortcode') {
+            echo '<code>[push_notification id="' . $post_id . '"]</code>';
+        }
     }
 
     public function add_service_worker() {
