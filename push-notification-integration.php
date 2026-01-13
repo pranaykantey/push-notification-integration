@@ -15,6 +15,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+// Define plugin constants
+define('PUSH_NOTIFICATION_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('PUSH_NOTIFICATION_PLUGIN_URL', plugin_dir_url(__FILE__));
+
 // Include files
 require_once plugin_dir_path(__FILE__) . 'includes/class-push-notification-integration.php';
 require_once plugin_dir_path(__FILE__) . 'includes/frontend.php';
