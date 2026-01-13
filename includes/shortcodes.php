@@ -14,8 +14,11 @@ function push_notification_shortcode($atts) {
     $title = $post->post_title;
     $body = get_post_meta($post->ID, '_push_notification_body', true);
     $icon = get_post_meta($post->ID, '_push_notification_icon', true);
+    $image = get_post_meta($post->ID, '_push_notification_image', true);
+    $action_title = get_post_meta($post->ID, '_push_notification_action_title', true);
+    $action_url = get_post_meta($post->ID, '_push_notification_action_url', true);
 
-    return '<button class="push-notification-btn" data-title="' . esc_attr($title) . '" data-body="' . esc_attr($body) . '" data-icon="' . esc_attr($icon) . '">Show Notification</button>';
+    return '<button class="push-notification-btn" data-title="' . esc_attr($title) . '" data-body="' . esc_attr($body) . '" data-icon="' . esc_attr($icon) . '" data-image="' . esc_attr($image) . '" data-action-title="' . esc_attr($action_title) . '" data-action-url="' . esc_attr($action_url) . '">Show Notification</button>';
 }
 
 function push_notifications_list_shortcode() {
@@ -38,11 +41,14 @@ function push_notifications_list_shortcode() {
         $title = $notification->post_title;
         $body = get_post_meta($notification->ID, '_push_notification_body', true);
         $icon = get_post_meta($notification->ID, '_push_notification_icon', true);
+        $image = get_post_meta($notification->ID, '_push_notification_image', true);
+        $action_title = get_post_meta($notification->ID, '_push_notification_action_title', true);
+        $action_url = get_post_meta($notification->ID, '_push_notification_action_url', true);
 
         $output .= '<tr>';
         $output .= '<td style="border:1px solid #ddd; padding:8px;">' . esc_html($title) . '</td>';
         $output .= '<td style="border:1px solid #ddd; padding:8px;">' . esc_html($body) . '</td>';
-        $output .= '<td style="border:1px solid #ddd; padding:8px;"><button class="push-notification-btn" data-title="' . esc_attr($title) . '" data-body="' . esc_attr($body) . '" data-icon="' . esc_attr($icon) . '">Show Notification</button></td>';
+        $output .= '<td style="border:1px solid #ddd; padding:8px;"><button class="push-notification-btn" data-title="' . esc_attr($title) . '" data-body="' . esc_attr($body) . '" data-icon="' . esc_attr($icon) . '" data-image="' . esc_attr($image) . '" data-action-title="' . esc_attr($action_title) . '" data-action-url="' . esc_attr($action_url) . '">Show Notification</button></td>';
         $output .= '</tr>';
     }
 

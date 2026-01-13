@@ -19,39 +19,49 @@ jQuery(document).ready(function($) {
             alert('Please accept notifications consent first.');
             return;
         }
-        var title = jQuery(this).data('title');
-        var body = jQuery(this).data('body');
-        var icon = jQuery(this).data('icon');
-        showPushNotification(title, body, icon);
+        var data = {
+            title: jQuery(this).data('title'),
+            body: jQuery(this).data('body'),
+            icon: jQuery(this).data('icon'),
+            image: jQuery(this).data('image'),
+            actionTitle: jQuery(this).data('action-title'),
+            actionUrl: jQuery(this).data('action-url')
+        };
+        showPushNotification(data);
     });
 
     // Show a notification
-    window.showPushNotification = function(title, body, icon) {
+    window.showPushNotification = function(data) {
         if (!('Notification' in window)) {
             console.log('This browser does not support notifications.');
             return;
         }
 
+        var options = {
+            body: data.body || pushNotificationOptions.defaultBody,
+            icon: data.icon || pushNotificationOptions.iconUrl
+        };
+
+        if (data.image) {
+            options.image = data.image;
+        }
+
+        if (data.actionTitle) {
+            options.actions = [{
+                action: 'view',
+                title: data.actionTitle
+            }];
+            options.data = { url: data.actionUrl };
+        }
+
         if (Notification.permission === 'granted') {
-            title = title || pushNotificationOptions.defaultTitle;
-            body = body || pushNotificationOptions.defaultBody;
-            icon = icon || pushNotificationOptions.iconUrl;
-            new Notification(title, {
-                body: body,
-                icon: icon
-            });
+            new Notification(data.title || pushNotificationOptions.defaultTitle, options);
         } else if (Notification.permission !== 'denied') {
             // Request permission
             Notification.requestPermission().then(function(permission) {
                 if (permission === 'granted') {
                     console.log('Notification permission granted.');
-                    title = title || pushNotificationOptions.defaultTitle;
-                    body = body || pushNotificationOptions.defaultBody;
-                    icon = icon || pushNotificationOptions.iconUrl;
-                    new Notification(title, {
-                        body: body,
-                        icon: icon
-                    });
+                    new Notification(data.title || pushNotificationOptions.defaultTitle, options);
                 } else {
                     console.log('Notification permission denied.');
                     alert('Notifications are blocked. Please enable notifications for this site in your browser settings.');

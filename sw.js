@@ -70,7 +70,13 @@ self.addEventListener('notificationclick', function(event) {
 
     event.notification.close();
 
-    event.waitUntil(
-        clients.openWindow('/') // Open the site when clicked
-    );
+    if (event.action === 'view' && event.notification.data && event.notification.data.url) {
+        event.waitUntil(
+            clients.openWindow(event.notification.data.url)
+        );
+    } else {
+        event.waitUntil(
+            clients.openWindow('/') // Open the site when clicked
+        );
+    }
 });
