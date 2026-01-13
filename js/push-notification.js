@@ -1,6 +1,68 @@
 // Push Notification Integration JavaScript with jQuery
 
 jQuery(document).ready(function($) {
+    // Show a notification
+    window.showPushNotification = function(data, notificationId, variant) {
+        if (!('Notification' in window)) {
+            console.log('This browser does not support notifications.');
+            return;
+        }
+
+        var options = {
+            body: data.body || pushNotificationOptions.defaultBody,
+            icon: data.icon || pushNotificationOptions.iconUrl
+        };
+
+        if (data.image) {
+            options.image = data.image;
+        }
+
+        if (data.actionTitle) {
+            options.actions = [{
+                action: 'view',
+                title: data.actionTitle
+            }];
+            options.data = { url: data.actionUrl, notificationId: notificationId };
+        }
+
+        if (Notification.permission === 'granted') {
+            var notification = new Notification(data.title || pushNotificationOptions.defaultTitle, options);
+            trackEvent(notificationId, 'notification_shown', variant);
+
+            // Track action clicks
+            notification.onclick = function() {
+                trackEvent(notificationId, 'action_click', variant);
+                if (data.actionUrl) {
+                    window.open(data.actionUrl);
+                }
+            };
+        } else if (Notification.permission !== 'denied') {
+            // Request permission
+            Notification.requestPermission().then(function(permission) {
+                if (permission === 'granted') {
+                    console.log('Notification permission granted.');
+                    var notification = new Notification(data.title || pushNotificationOptions.defaultTitle, options);
+                    trackEvent(notificationId, 'notification_shown', variant);
+
+                    notification.onclick = function() {
+                        trackEvent(notificationId, 'action_click', variant);
+                        if (data.actionUrl) {
+                            window.open(data.actionUrl);
+                        }
+                    };
+                } else {
+                    console.log('Notification permission denied.');
+                    alert('Notifications are blocked. Please enable notifications for this site in your browser settings.');
+                }
+            });
+        } else {
+            console.log('Notification permission was denied. Please enable notifications in your browser settings.');
+            alert('Notifications are blocked. Please enable notifications for this site in your browser settings.');
+            // Try email fallback
+            sendEmailFallback(notificationId);
+        }
+    };
+
     // Consent handling
     jQuery(document).on('click', '#accept-notifications', function() {
         document.cookie = "push_notification_consent=accepted; path=/; max-age=31536000";
@@ -66,67 +128,6 @@ jQuery(document).ready(function($) {
         showPushNotification(data, notificationId, variant);
     });
 
-    // Show a notification
-    window.showPushNotification = function(data, notificationId, variant) {
-        if (!('Notification' in window)) {
-            console.log('This browser does not support notifications.');
-            return;
-        }
-
-        var options = {
-            body: data.body || pushNotificationOptions.defaultBody,
-            icon: data.icon || pushNotificationOptions.iconUrl
-        };
-
-        if (data.image) {
-            options.image = data.image;
-        }
-
-        if (data.actionTitle) {
-            options.actions = [{
-                action: 'view',
-                title: data.actionTitle
-            }];
-            options.data = { url: data.actionUrl, notificationId: notificationId };
-        }
-
-        if (Notification.permission === 'granted') {
-            var notification = new Notification(data.title || pushNotificationOptions.defaultTitle, options);
-            trackEvent(notificationId, 'notification_shown', variant);
-
-            // Track action clicks
-            notification.onclick = function() {
-                trackEvent(notificationId, 'action_click', variant);
-                if (data.actionUrl) {
-                    window.open(data.actionUrl);
-                }
-            };
-        } else if (Notification.permission !== 'denied') {
-            // Request permission
-            Notification.requestPermission().then(function(permission) {
-                if (permission === 'granted') {
-                    console.log('Notification permission granted.');
-                    var notification = new Notification(data.title || pushNotificationOptions.defaultTitle, options);
-                    trackEvent(notificationId, 'notification_shown', variant);
-
-                    notification.onclick = function() {
-                        trackEvent(notificationId, 'action_click', variant);
-                        if (data.actionUrl) {
-                            window.open(data.actionUrl);
-                        }
-                    };
-                } else {
-                    console.log('Notification permission denied.');
-                    alert('Notifications are blocked. Please enable notifications for this site in your browser settings.');
-                }
-            });
-        } else {
-            console.log('Notification permission was denied. Please enable notifications in your browser settings.');
-            alert('Notifications are blocked. Please enable notifications for this site in your browser settings.');
-            // Try email fallback
-            sendEmailFallback(notificationId);
-        }
-    };
 
     function getCookie(name) {
         var value = "; " + document.cookie;
