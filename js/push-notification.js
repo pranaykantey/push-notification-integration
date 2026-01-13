@@ -12,6 +12,20 @@ jQuery(document).ready(function($) {
         jQuery('#push-notification-consent').hide();
     });
 
+    // Show recent post notification if available
+    if (typeof recentPostNotification !== 'undefined') {
+        var consent = getCookie('push_notification_consent');
+        if (consent === 'accepted') {
+            showPushNotification({
+                title: recentPostNotification.title,
+                body: recentPostNotification.body,
+                icon: recentPostNotification.icon,
+                actionTitle: 'Read More',
+                actionUrl: recentPostNotification.url
+            });
+        }
+    }
+
     // Handle button clicks for push notifications
     jQuery(document).on('click', '.push-notification-btn', function() {
         var consent = getCookie('push_notification_consent');
