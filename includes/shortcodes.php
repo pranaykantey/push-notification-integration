@@ -1,7 +1,7 @@
 <?php
 
 function push_notification_shortcode($atts) {
-    $atts = shortcode_atts(array('id' => ''), $atts, 'push_notification');
+    $atts = shortcode_atts(array('id' => '', 'roles' => ''), $atts, 'push_notification');
     if (empty($atts['id']) || !is_numeric($atts['id'])) {
         return '';
     }
@@ -9,6 +9,23 @@ function push_notification_shortcode($atts) {
     $post = get_post($atts['id']);
     if (!$post || $post->post_type !== 'push_notification') {
         return '';
+    }
+
+    // Check user roles if specified
+    if (!empty($atts['roles'])) {
+        $allowed_roles = array_map('trim', explode(',', $atts['roles']));
+        $user = wp_get_current_user();
+        $user_roles = $user->roles;
+        $has_role = false;
+        foreach ($allowed_roles as $role) {
+            if (in_array($role, $user_roles)) {
+                $has_role = true;
+                break;
+            }
+        }
+        if (!$has_role) {
+            return '';
+        }
     }
 
     $title = $post->post_title;
