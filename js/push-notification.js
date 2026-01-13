@@ -42,6 +42,7 @@ jQuery(document).ready(function($) {
             });
         } else {
             console.log('Notification permission was denied. Please enable notifications in your browser settings.');
+            alert('Notifications are blocked. Please enable notifications for this site in your browser settings.');
         }
     };
 });
