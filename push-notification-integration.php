@@ -26,6 +26,7 @@ class Push_Notification_Integration {
         add_action('init', array($this, 'register_post_type'));
         add_action('add_meta_boxes', array($this, 'add_meta_boxes'));
         add_action('save_post', array($this, 'save_meta_boxes'));
+        add_shortcode('push_notification', array($this, 'push_notification_shortcode'));
     }
 
     public function enqueue_scripts() {
@@ -139,6 +140,24 @@ class Push_Notification_Integration {
         if (isset($_POST['push_notification_icon'])) {
             update_post_meta($post_id, '_push_notification_icon', esc_url_raw($_POST['push_notification_icon']));
         }
+    }
+
+    public function push_notification_shortcode($atts) {
+        $atts = shortcode_atts(array('id' => ''), $atts, 'push_notification');
+        if (empty($atts['id']) || !is_numeric($atts['id'])) {
+            return '';
+        }
+
+        $post = get_post($atts['id']);
+        if (!$post || $post->post_type !== 'push_notification') {
+            return '';
+        }
+
+        $title = $post->post_title;
+        $body = get_post_meta($post->ID, '_push_notification_body', true);
+        $icon = get_post_meta($post->ID, '_push_notification_icon', true);
+
+        return '<button class="push-notification-btn" data-title="' . esc_attr($title) . '" data-body="' . esc_attr($body) . '" data-icon="' . esc_attr($icon) . '">Show Notification</button>';
     }
 
     public function add_service_worker() {
