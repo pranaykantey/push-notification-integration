@@ -17,9 +17,16 @@ function push_notification_enqueue_scripts() {
                 'title' => 'New Post: ' . $post->post_title,
                 'body' => wp_trim_words(strip_tags($post->post_content), 20),
                 'icon' => get_option('push_notification_icon', ''),
-                'url' => get_permalink($post->ID)
+                'action_title' => 'Read More',
+                'action_url' => get_permalink($post->ID)
             ));
         }
+    }
+
+    // Check for API triggered notification
+    $api_data = get_transient('push_notification_api');
+    if ($api_data) {
+        wp_localize_script('push-notification-js', 'apiNotification', $api_data);
     }
 }
 

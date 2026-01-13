@@ -8,6 +8,7 @@ class Push_Notification_Integration {
         add_action('wp_footer', 'push_notification_add_service_worker');
         add_action('wp_footer', 'push_notification_consent_banner');
         add_action('publish_post', 'push_notification_on_publish_post', 10, 2);
+        add_action('rest_api_init', 'push_notification_register_api');
         add_action('admin_menu', 'push_notification_add_admin_menu');
         add_action('admin_init', 'push_notification_register_settings');
         add_action('init', 'push_notification_register_post_type');

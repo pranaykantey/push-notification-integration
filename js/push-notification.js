@@ -20,9 +20,17 @@ jQuery(document).ready(function($) {
                 title: recentPostNotification.title,
                 body: recentPostNotification.body,
                 icon: recentPostNotification.icon,
-                actionTitle: 'Read More',
-                actionUrl: recentPostNotification.url
+                actionTitle: recentPostNotification.action_title,
+                actionUrl: recentPostNotification.action_url
             });
+        }
+    }
+
+    // Show API triggered notification if available
+    if (typeof apiNotification !== 'undefined') {
+        var consent = getCookie('push_notification_consent');
+        if (consent === 'accepted') {
+            showPushNotification(apiNotification);
         }
     }
 
