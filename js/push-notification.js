@@ -15,11 +15,14 @@ jQuery(document).ready(function($) {
 
     // Example: Show a notification on button click (you can add a button in your theme)
     // This is just a demo; integrate as needed
-    window.showPushNotification = function(title, body) {
+    window.showPushNotification = function(title, body, icon) {
         if (Notification.permission === 'granted') {
+            title = title || pushNotificationOptions.defaultTitle;
+            body = body || pushNotificationOptions.defaultBody;
+            icon = icon || pushNotificationOptions.iconUrl;
             new Notification(title, {
                 body: body,
-                icon: '/path/to/icon.png' // Update with your icon path
+                icon: icon
             });
         }
     };
