@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Push Notification Integration Demo Content -->
+<!-- This file contains sample notifications for demonstration purposes -->
+<!-- Import this content to showcase the plugin's capabilities -->
+
+<rss version="2.0"
+	xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:wp="http://wordpress.org/export/1.2/"
+>
+
+<channel>
+	<title>Push Notification Integration Demo</title>
+	<link>https://demo.example.com</link>
+	<description>Demo content for Push Notification Integration plugin</description>
+	<pubDate>Mon, 17 Jan 2026 18:10:00 +0000</pubDate>
+	<language>en-US</language>
+	<wp:wxr_version>1.2</wp:wxr_version>
+	<wp:base_site_url>https://demo.example.com</wp:base_site_url>
+	<wp:base_blog_url>https://demo.example.com</wp:base_blog_url>
+
+	<!-- Sample Push Notifications -->
+	<item>
+		<title>Welcome Message</title>
+		<link>https://demo.example.com/push-notification/welcome-message/</link>
+		<pubDate>Mon, 17 Jan 2026 10:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">https://demo.example.com/?post_type=push_notification&#038;p=1</guid>
+		<description></description>
+		<content:encoded><![CDATA[Welcome to our website! We're excited to have you here.]]></content:encoded>
+		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+		<wp:post_id>1</wp:post_id>
+		<wp:post_date>2026-01-17 10:00:00</wp:post_date>
+		<wp:post_date_gmt>2026-01-17 10:00:00</wp:post_date_gmt>
+		<wp:post_modified>2026-01-17 10:00:00</wp:post_modified>
+		<wp:post_modified_gmt>2026-01-17 10:00:00</wp:post_modified_gmt>
+		<wp:comment_status>closed</wp:comment_status>
+		<wp:ping_status>closed</wp:ping_status>
+		<wp:post_name>welcome-message</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type>push_notification</wp:post_type>
+		<wp:post_password></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_title</wp:meta_key>
+			<wp:meta_value><![CDATA[Welcome to Our Site!]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_body</wp:meta_key>
+			<wp:meta_value><![CDATA[Thanks for visiting! Discover our amazing features and stay updated with the latest news.]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_icon</wp:meta_key>
+			<wp:meta_value><![CDATA[https://demo.example.com/wp-content/uploads/icon-192.png]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_action_title</wp:meta_key>
+			<wp:meta_value><![CDATA[Explore Now]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_action_url</wp:meta_key>
+			<wp:meta_value><![CDATA[https://demo.example.com/features/]]></wp:meta_value>
+		</wp:postmeta>
+	</item>
+
+	<item>
+		<title>Flash Sale Alert</title>
+		<link>https://demo.example.com/push-notification/flash-sale-alert/</link>
+		<pubDate>Mon, 17 Jan 2026 11:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">https://demo.example.com/?post_type=push_notification&#038;p=2</guid>
+		<description></description>
+		<content:encoded><![CDATA[Don't miss our limited-time flash sale!]]></content:encoded>
+		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+		<wp:post_id>2</wp:post_id>
+		<wp:post_date>2026-01-17 11:00:00</wp:post_date>
+		<wp:post_date_gmt>2026-01-17 11:00:00</wp:post_date_gmt>
+		<wp:post_modified>2026-01-17 11:00:00</wp:post_modified>
+		<wp:post_modified_gmt>2026-01-17 11:00:00</wp:post_modified_gmt>
+		<wp:comment_status>closed</wp:comment_status>
+		<wp:ping_status>closed</wp:ping_status>
+		<wp:post_name>flash-sale-alert</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type>push_notification</wp:post_type>
+		<wp:post_password></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_title</wp:meta_key>
+			<wp:meta_value><![CDATA[🔥 FLASH SALE: 50% OFF!]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_body</wp:meta_key>
+			<wp:meta_value><![CDATA[Limited time offer! Get 50% off on all premium products. Sale ends in 24 hours.]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_image</wp:meta_key>
+			<wp:meta_value><![CDATA[https://demo.example.com/wp-content/uploads/sale-banner.jpg]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_icon</wp:meta_key>
+			<wp:meta_value><![CDATA[https://demo.example.com/wp-content/uploads/sale-icon.png]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_action_title</wp:meta_key>
+			<wp:meta_value><![CDATA[Shop Now]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_action_url</wp:meta_key>
+			<wp:meta_value><![CDATA[https://demo.example.com/shop/?sale=flash]]></wp:meta_value>
+		</wp:postmeta>
+		<!-- A/B Testing Variant B -->
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_title_b</wp:meta_key>
+			<wp:meta_value><![CDATA[⚡ URGENT: Massive Discounts!]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_body_b</wp:meta_key>
+			<wp:meta_value><![CDATA[Everything must go! Up to 70% off selected items. Don't wait - offer expires soon!]]></wp:meta_value>
+		</wp:postmeta>
+	</item>
+
+	<item>
+		<title>Newsletter Signup</title>
+		<link>https://demo.example.com/push-notification/newsletter-signup/</link>
+		<pubDate>Mon, 17 Jan 2026 12:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">https://demo.example.com/?post_type=push_notification&#038;p=3</guid>
+		<description></description>
+		<content:encoded><![CDATA[Subscribe to our newsletter for exclusive updates!]]></content:encoded>
+		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+		<wp:post_id>3</wp:post_id>
+		<wp:post_date>2026-01-17 12:00:00</wp:post_date>
+		<wp:post_date_gmt>2026-01-17 12:00:00</wp:post_date_gmt>
+		<wp:post_modified>2026-01-17 12:00:00</wp:post_modified>
+		<wp:post_modified_gmt>2026-01-17 12:00:00</wp:post_modified_gmt>
+		<wp:comment_status>closed</wp:comment_status>
+		<wp:ping_status>closed</wp:ping_status>
+		<wp:post_name>newsletter-signup</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type>push_notification</wp:post_type>
+		<wp:post_password></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_title</wp:meta_key>
+			<wp:meta_value><![CDATA[📧 Stay Updated]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_body</wp:meta_key>
+			<wp:meta_value><![CDATA[Get exclusive content, early access to new features, and special offers delivered to your inbox.]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_icon</wp:meta_key>
+			<wp:meta_value><![CDATA[https://demo.example.com/wp-content/uploads/newsletter-icon.png]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_action_title</wp:meta_key>
+			<wp:meta_value><![CDATA[Subscribe Now]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_action_url</wp:meta_key>
+			<wp:meta_value><![CDATA[https://demo.example.com/newsletter/]]></wp:meta_value>
+		</wp:postmeta>
+	</item>
+
+	<item>
+		<title>Product Back in Stock</title>
+		<link>https://demo.example.com/push-notification/product-back-in-stock/</link>
+		<pubDate>Mon, 17 Jan 2026 13:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">https://demo.example.com/?post_type=push_notification&#038;p=4</guid>
+		<description></description>
+		<content:encoded><![CDATA[Your favorite product is back in stock!]]></content:encoded>
+		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+		<wp:post_id>4</wp:post_id>
+		<wp:post_date>2026-01-17 13:00:00</wp:post_date>
+		<wp:post_date_gmt>2026-01-17 13:00:00</wp:post_date_gmt>
+		<wp:post_modified>2026-01-17 13:00:00</wp:post_modified>
+		<wp:post_modified_gmt>2026-01-17 13:00:00</wp:post_modified_gmt>
+		<wp:comment_status>closed</wp:comment_status>
+		<wp:ping_status>closed</wp:ping_status>
+		<wp:post_name>product-back-in-stock</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type>push_notification</wp:post_type>
+		<wp:post_password></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_title</wp:meta_key>
+			<wp:meta_value><![CDATA[🎉 Back in Stock!]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_body</wp:meta_key>
+			<wp:meta_value><![CDATA[The product you wanted is now available! Limited quantities - order now before it's gone again.]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_image</wp:meta_key>
+			<wp:meta_value><![CDATA[https://demo.example.com/wp-content/uploads/product-image.jpg]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_icon</wp:meta_key>
+			<wp:meta_value><![CDATA[https://demo.example.com/wp-content/uploads/stock-icon.png]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_action_title</wp:meta_key>
+			<wp:meta_value><![CDATA[Buy Now]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_action_url</wp:meta_key>
+			<wp:meta_value><![CDATA[https://demo.example.com/product/back-in-stock-item/]]></wp:meta_value>
+		</wp:postmeta>
+	</item>
+
+	<item>
+		<title>Breaking News Alert</title>
+		<link>https://demo.example.com/push-notification/breaking-news-alert/</link>
+		<pubDate>Mon, 17 Jan 2026 14:00:00 +0000</pubDate>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<guid isPermaLink="false">https://demo.example.com/?post_type=push_notification&#038;p=5</guid>
+		<description></description>
+		<content:encoded><![CDATA[Important announcement from our company!]]></content:encoded>
+		<excerpt:encoded><![CDATA[]]></excerpt:encoded>
+		<wp:post_id>5</wp:post_id>
+		<wp:post_date>2026-01-17 14:00:00</wp:post_date>
+		<wp:post_date_gmt>2026-01-17 14:00:00</wp:post_date_gmt>
+		<wp:post_modified>2026-01-17 14:00:00</wp:post_modified>
+		<wp:post_modified_gmt>2026-01-17 14:00:00</wp:post_modified_gmt>
+		<wp:comment_status>closed</wp:comment_status>
+		<wp:ping_status>closed</wp:ping_status>
+		<wp:post_name>breaking-news-alert</wp:post_name>
+		<wp:status>publish</wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type>push_notification</wp:post_type>
+		<wp:post_password></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_title</wp:meta_key>
+			<wp:meta_value><![CDATA[🚨 BREAKING: Major Update]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_body</wp:meta_key>
+			<wp:meta_value><![CDATA[We've just launched an exciting new feature that will change how you use our platform. Read all about it!]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_icon</wp:meta_key>
+			<wp:meta_value><![CDATA[https://demo.example.com/wp-content/uploads/breaking-icon.png]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_action_title</wp:meta_key>
+			<wp:meta_value><![CDATA[Read More]]></wp:meta_value>
+		</wp:postmeta>
+		<wp:postmeta>
+			<wp:meta_key>_push_notification_action_url</wp:meta_key>
+			<wp:meta_value><![CDATA[https://demo.example.com/blog/major-platform-update/]]></wp:meta_value>
+		</wp:postmeta>
+	</item>
+
+</channel>
+</rss>

@@ -13,7 +13,7 @@ function push_notification_enqueue_scripts() {
     $recent_post_id = get_transient('push_notification_recent_post');
     if ($recent_post_id && get_option('push_notification_auto_new_post')) {
         $post = get_post($recent_post_id);
-        if ($post) {
+        if ($post && push_notification_should_show_post_notification($post)) {
             wp_localize_script('push-notification-js', 'recentPostNotification', array(
                 'title' => 'New Post: ' . $post->post_title,
                 'body' => wp_trim_words(strip_tags($post->post_content), 20),
@@ -28,6 +28,28 @@ function push_notification_enqueue_scripts() {
     $api_data = get_transient('push_notification_api');
     if ($api_data) {
         wp_localize_script('push-notification-js', 'apiNotification', $api_data);
+    }
+
+    // Check for user-specific cart add notification
+    $cart_notification = null;
+    $user_id = get_current_user_id();
+    if ($user_id) {
+        $cart_notification = get_user_meta($user_id, '_push_notification_cart_add', true);
+        if ($cart_notification) {
+            delete_user_meta($user_id, '_push_notification_cart_add');
+        }
+    } else {
+        if (!session_id()) {
+            session_start();
+        }
+        if (isset($_SESSION['push_notification_cart_add'])) {
+            $cart_notification = $_SESSION['push_notification_cart_add'];
+            unset($_SESSION['push_notification_cart_add']);
+        }
+    }
+
+    if ($cart_notification) {
+        wp_localize_script('push-notification-js', 'cartAddNotification', $cart_notification);
     }
 }
 
@@ -56,8 +78,54 @@ function push_notification_consent_banner() {
     }
 }
 
+function push_notification_should_show_post_notification($post) {
+    $user_id = get_current_user_id();
+
+    // Check if user has consented to notifications
+    if (!isset($_COOKIE['push_notification_consent']) || $_COOKIE['push_notification_consent'] !== 'accepted') {
+        return false;
+    }
+
+    // Check post type filtering
+    $allowed_types = array_map('trim', explode(',', get_option('push_notification_post_types', 'post')));
+    if (!in_array($post->post_type, $allowed_types)) {
+        return false;
+    }
+
+    // Exclude post author if setting is enabled
+    if (get_option('push_notification_post_exclude_author') && $user_id == $post->post_author) {
+        return false;
+    }
+
+    // Check role targeting
+    $target_roles = get_option('push_notification_post_target_roles', '');
+    if (!empty($target_roles)) {
+        $target_roles = array_map('trim', explode(',', $target_roles));
+        $user = wp_get_current_user();
+        $user_roles = $user->roles;
+        $has_target_role = false;
+
+        foreach ($target_roles as $role) {
+            if (in_array($role, $user_roles)) {
+                $has_target_role = true;
+                break;
+            }
+        }
+
+        if (!$has_target_role) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 function push_notification_on_publish_post($post_id, $post) {
     if (get_option('push_notification_auto_new_post')) {
-        set_transient('push_notification_recent_post', $post_id, 3600);
+        // Check post type filtering before setting transient
+        $allowed_types = array_map('trim', explode(',', get_option('push_notification_post_types', 'post')));
+        if (in_array($post->post_type, $allowed_types)) {
+            set_transient('push_notification_recent_post', $post_id, 3600);
+        }
     }
 }

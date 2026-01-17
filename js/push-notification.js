@@ -27,11 +27,11 @@ jQuery(document).ready(function($) {
 
         if (Notification.permission === 'granted') {
             var notification = new Notification(data.title || pushNotificationOptions.defaultTitle, options);
-            trackEvent(notificationId, 'notification_shown', variant);
+            trackEvent(notificationId, 'notification-shown', variant);
 
             // Track action clicks
             notification.onclick = function() {
-                trackEvent(notificationId, 'action_click', variant);
+                trackEvent(notificationId, 'action-click', variant);
                 if (data.actionUrl) {
                     window.open(data.actionUrl);
                 }
@@ -42,10 +42,10 @@ jQuery(document).ready(function($) {
                 if (permission === 'granted') {
                     console.log('Notification permission granted.');
                     var notification = new Notification(data.title || pushNotificationOptions.defaultTitle, options);
-                    trackEvent(notificationId, 'notification_shown', variant);
+                    trackEvent(notificationId, 'notification-shown', variant);
 
                     notification.onclick = function() {
-                        trackEvent(notificationId, 'action_click', variant);
+                        trackEvent(notificationId, 'action-click', variant);
                         if (data.actionUrl) {
                             window.open(data.actionUrl);
                         }
@@ -106,6 +106,14 @@ jQuery(document).ready(function($) {
         }
     }
 
+    // Show cart add notification if available
+    if (typeof cartAddNotification !== 'undefined') {
+        var consent = getCookie('push_notification_consent');
+        if (consent === 'accepted') {
+            showPushNotification(cartAddNotification);
+        }
+    }
+
     // Handle button clicks for push notifications
     jQuery(document).on('click', '.push-notification-btn', function() {
         var consent = getCookie('push_notification_consent');
@@ -115,7 +123,7 @@ jQuery(document).ready(function($) {
         }
         var notificationId = jQuery(this).data('id') || 0;
         var variant = jQuery(this).data('variant') || 'A';
-        trackEvent(notificationId, 'button_click', variant);
+        trackEvent(notificationId, 'button-click', variant);
 
         var data = {
             title: jQuery(this).data('title'),

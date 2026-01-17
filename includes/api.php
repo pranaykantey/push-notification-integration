@@ -90,10 +90,46 @@ function push_notification_send_api($request) {
 // WooCommerce integration
 if (class_exists('WooCommerce')) {
     add_action('woocommerce_order_status_changed', 'push_notification_order_status_changed', 10, 4);
+    if (get_option('push_notification_woocommerce_cart_add', '0')) {
+        add_action('woocommerce_add_to_cart', 'push_notification_cart_add', 10, 4);
+    }
+}
+
+function push_notification_cart_add($cart_item_key, $product_id, $quantity, $variation_id) {
+    // Only proceed if user has consented to notifications
+    if (!isset($_COOKIE['push_notification_consent']) || $_COOKIE['push_notification_consent'] !== 'accepted') {
+        return;
+    }
+
+    $product = wc_get_product($product_id);
+    if (!$product) return;
+
+    $data = array(
+        'title' => 'Added to Cart',
+        'body' => $product->get_name() . ' has been added to your cart.',
+        'icon' => get_option('push_notification_icon', ''),
+        'action_title' => 'View Cart',
+        'action_url' => wc_get_cart_url(),
+        'timestamp' => time()
+    );
+
+    $user_id = get_current_user_id();
+    if ($user_id) {
+        // For logged-in users, store in user meta
+        update_user_meta($user_id, '_push_notification_cart_add', $data);
+    } else {
+        // For anonymous users, use session
+        if (!session_id()) {
+            session_start();
+        }
+        $_SESSION['push_notification_cart_add'] = $data;
+    }
+
+    do_action('push_notification_triggered', $data);
 }
 
 function push_notification_order_status_changed($order_id, $old_status, $new_status, $order) {
-    if ($new_status === 'completed') {
+    if ($new_status === 'completed' && get_option('push_notification_woocommerce_order_completed', '1')) {
         $data = array(
             'title' => 'Order Completed',
             'body' => 'Your order #' . $order_id . ' has been completed.',
