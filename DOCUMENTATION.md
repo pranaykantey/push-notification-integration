@@ -13,6 +13,7 @@ A comprehensive WordPress plugin for sending rich, interactive push notification
 - [Installation](#-installation)
 - [Quick Start](#-quick-start)
 - [Configuration](#-configuration)
+- [WooCommerce Notifications](#-woocommerce-notifications)
 - [Usage Guide](#-usage-guide)
 - [Advanced Features](#-advanced-features)
 - [API Reference](#-api-reference)
@@ -37,6 +38,18 @@ A comprehensive WordPress plugin for sending rich, interactive push notification
 - 🤖 **Automation** - Trigger notifications for posts, orders, events
 - 🔗 **CRM Integration** - Sync with Mailchimp, HubSpot, and custom CRMs
 - 🛠️ **Developer API** - REST API and hooks for custom integrations
+
+### WooCommerce E-commerce Features
+- 🛒 **Order Notifications** - Order received, completed, and shipped alerts
+- 🛒 **Cart Abandonment** - Recover lost sales with cart reminder notifications
+- 🛒 **Price Drop Alerts** - Notify users when wishlist items go on sale
+- 🛒 **Back in Stock** - Alert customers when out-of-stock items return
+- 🛒 **Restock Priority** - Priority alerts for cart abandoners when items restock
+- 🛒 **Payment Failed Recovery** - Urgent notifications for failed payments
+- 🛒 **Wishlist Sale + Stock** - Combined alerts for wishlist items on sale AND in stock
+- 🛒 **Weather-based Promotions** - Contextual offers based on local weather
+- 🛒 **Flash Sales** - Time-limited offers with countdown notifications
+- 🛒 **Holiday Campaigns** - Pre-scheduled notifications for major holidays
 
 ### Page Builder Support
 - 🎨 **Elementor Widget** - Drag-and-drop notification placement
@@ -104,6 +117,14 @@ A comprehensive WordPress plugin for sending rich, interactive push notification
 4. **Create** custom notification templates
 5. **Test** all notification types
 
+### 3. WooCommerce Setup (10 minutes)
+
+1. **Install/Activate** WooCommerce
+2. **Go to** **Settings > Push Notifications > WooCommerce**
+3. **Enable** desired notification types
+4. **Configure** abandoned cart timing
+5. **Test** order notifications
+
 ## ⚙️ Configuration
 
 ### Basic Settings
@@ -143,6 +164,176 @@ add_filter('push_notification_analytics_enabled', '__return_true');
 add_action('my_custom_event', function($data) {
     do_action('push_notification_triggered', $data);
 });
+```
+
+## 🛒 WooCommerce Notifications
+
+The plugin includes comprehensive WooCommerce integration for e-commerce stores. Configure these settings in **Settings > Push Notifications > WooCommerce**.
+
+### Order Notifications
+
+#### Order Received (Processing/On-Hold)
+Notify customers when their order is received.
+- **Default Message**: "We have received your order #[order_id]. Thank you!"
+- **Action Button**: View Order
+- **Setting**: `push_notification_woocommerce_order_received`
+
+#### Order Completed
+Alert customers when their order is fully processed.
+- **Default Message**: "Your order #[order_id] has been completed."
+- **Action Button**: View Order
+- **Setting**: `push_notification_woocommerce_order_completed`
+
+#### Order Shipped
+Notify when orders are dispatched with tracking info.
+- **Default Message**: "Your order #[order_id] has been shipped!"
+- **Includes**: Tracking number if available
+- **Action Button**: Track Order
+- **Setting**: `push_notification_woocommerce_order_shipped`
+
+### Cart & Abandonment Notifications
+
+#### Cart Add Notification
+Alert users when products are added to cart.
+- **Default Message**: "[Product Name] has been added to your cart."
+- **Action Button**: View Cart
+- **Setting**: `push_notification_woocommerce_cart_add`
+
+#### Abandoned Cart Recovery
+Remind users about items left in their cart.
+- **Default Message**: "You left something behind!"
+- **Configurable Delay**: 1-24 hours
+- **Action Button**: View Cart
+- **Setting**: `push_notification_abandoned_cart`
+- **Related**: `push_notification_abandoned_cart_delay`
+
+#### Restock Priority (Cart Abandoners)
+Priority alerts for users who abandoned carts when items restock.
+- **Default Message**: "Good news! [Product] is back in stock. As a priority customer, you get first access!"
+- **Target**: Users who had product in abandoned cart
+- **Action Button**: Buy Now
+- **Setting**: `push_notification_woocommerce_restock_priority`
+
+### Price & Stock Notifications
+
+#### Price Drop Alerts
+Notify when wishlist items go on sale.
+- **Default Message**: "[Product] is now [new price] (was [old price]). Save [discount]%!"
+- **Target**: Users with product in wishlist
+- **Action Button**: View Product
+- **Setting**: `push_notification_woocommerce_price_drop`
+
+#### Back in Stock
+Alert customers when out-of-stock products are replenished.
+- **Default Message**: "[Product] is back in stock! Don't miss out."
+- **Target**: Users who subscribed to back-in-stock notifications
+- **Action Button**: Buy Now
+- **Setting**: `push_notification_woocommerce_back_in_stock`
+
+#### Low Stock Alert (Admin)
+Notify administrators when inventory is running low.
+- **Default Message**: "[Product] is running low on stock. Current quantity: [quantity]"
+- **Target**: Admin users
+- **Action Button**: Edit Product
+- **Setting**: `push_notification_woocommerce_low_stock`
+
+#### Wishlist Sale + Stock Alert
+Combined notification when wishlist items are both on sale AND in stock.
+- **Default Message**: "[Product] is back in stock AND on sale! [discount]% OFF - was [regular], now [sale]"
+- **Target**: Users with product in wishlist
+- **Action Button**: Shop Now
+- **Setting**: `push_notification_woocommerce_wishlist_alert`
+
+### Payment Recovery
+
+#### Payment Failed Recovery
+Send urgent notifications when payment fails, with increasing urgency.
+- **Default Message**: "Order #[order_id] payment failed. Please try again."
+- **Escalation**: 
+  - 1st failure: "Please try again"
+  - 2nd failure: "Your cart may expire soon!"
+  - 3rd failure: "Final attempt before cart expires!"
+- **Action Button**: Retry Payment
+- **Setting**: `push_notification_woocommerce_payment_failed`
+
+### Marketing & Promotions
+
+#### Coupon/Promotion Notifications
+Send custom coupon codes and promotional offers.
+- **Default Message**: "Use code [CODE] for [discount]. [description]"
+- **Action Button**: Shop Now
+- **Setting**: `push_notification_woocommerce_coupon`
+
+#### New Product Launch
+Alert customers about new product arrivals.
+- **Default Message**: "Check out [Product] - Now available for [price]"
+- **Target**: All subscribed users
+- **Action Button**: Shop Now
+- **Setting**: `push_notification_woocommerce_new_product`
+
+#### Sale/Flash Sale Alert
+Notify about products on sale with discount details.
+- **Default Message**: "[Product] is [discount]% OFF! Was [regular], now [sale]"
+- **Action Button**: Grab Deal
+- **Setting**: `push_notification_woocommerce_sale_alert`
+
+#### Review Reminder
+Ask customers to review their completed purchases.
+- **Default Message**: "Thanks for order #[order]! We'd love to hear your feedback."
+- **Trigger**: Order completed
+- **Action Button**: Write Review
+- **Setting**: `push_notification_woocommerce_review_reminder`
+
+### Advanced Marketing Features
+
+#### Weather-based Promotions
+Send contextual promotions based on local weather conditions.
+- **Weather Mappings**:
+  - ☀️ Sunny: Outdoor gear and summer essentials
+  - 🌧️ Rainy: Indoor essentials and home products
+  - ❄️ Cold: Winter wear and cozy items
+  - 🔥 Hot: Cooling products and summer sales
+- **Action Button**: Shop Now
+- **Setting**: `push_notification_woocommerce_weather_promo`
+- **Note**: Requires weather API integration for full functionality
+
+#### Time-based Flash Sales
+Limited-time offers with countdown urgency.
+- **Default Message**: "Limited Time Only! [discount] on selected items. Sale ends in [hours] hours!"
+- **Scheduling**: Daily automatic notifications at configurable time
+- **Duration**: Configurable sale length (default: 4 hours)
+- **Action Button**: Shop Flash Sale
+- **Setting**: `push_notification_woocommerce_time_offer`
+
+#### Holiday/Seasonal Campaigns
+Pre-scheduled notifications for major holidays.
+- **Supported Campaigns**:
+  - 🛒 Black Friday: Up to 70% OFF
+  - 🎄 Christmas: Holiday gifts and deals
+  - 🎉 New Year: Fresh start promotions
+  - 💕 Valentine's: Romantic gifts
+  - ☀️ Summer: Seasonal essentials
+- **Default Message**: "[Campaign message] Use code: HOLIDAY[discount] for extra savings!"
+- **Action Button**: Shop Now
+- **Setting**: `push_notification_woocommerce_holiday`
+
+### WooCommerce Configuration Example
+
+```php
+// Enable all WooCommerce notifications
+add_filter('push_notification_woocommerce_order_received', '__return_true');
+add_filter('push_notification_woocommerce_order_completed', '__return_true');
+add_filter('push_notification_woocommerce_order_shipped', '__return_true');
+add_filter('push_notification_abandoned_cart', '__return_true');
+add_filter('push_notification_abandoned_cart_delay', function() { return 2; }); // 2 hours
+add_filter('push_notification_woocommerce_price_drop', '__return_true');
+add_filter('push_notification_woocommerce_back_in_stock', '__return_true');
+add_filter('push_notification_woocommerce_restock_priority', '__return_true');
+add_filter('push_notification_woocommerce_payment_failed', '__return_true');
+add_filter('push_notification_woocommerce_wishlist_alert', '__return_true');
+add_filter('push_notification_woocommerce_weather_promo', '__return_true');
+add_filter('push_notification_woocommerce_time_offer', '__return_true');
+add_filter('push_notification_woocommerce_holiday', '__return_true');
 ```
 
 ## 📖 Usage Guide
@@ -357,6 +548,15 @@ document.addEventListener('pushNotificationClicked', function(e) {
 - **REST API**: Verify API endpoints are accessible
 - **JavaScript**: Check for tracking code errors
 
+### WooCommerce Notifications Not Working
+
+1. **Verify WooCommerce is active**
+2. **Check settings are enabled** in admin panel
+3. **Clear plugin cache** if using caching
+4. **Check user consent** for push notifications
+5. **Verify transients** are being created
+6. **Test with debug mode** enabled
+
 ### Common Issues
 
 #### "Notifications blocked"
@@ -383,6 +583,12 @@ Solution: User must click "Allow" on consent banner
 - ✅ Advanced user segmentation
 - ✅ Notification scheduling system
 - ✅ Enhanced analytics dashboard
+- ✅ **NEW**: Restock Priority for Cart Abandoners
+- ✅ **NEW**: Payment Failed Recovery notifications
+- ✅ **NEW**: Wishlist Sale + Stock Alert
+- ✅ **NEW**: Weather-based Promotions
+- ✅ **NEW**: Time-based Flash Sales
+- ✅ **NEW**: Holiday/Seasonal Campaigns
 
 ### Version 2.0.0
 - ✅ Complete architecture overhaul
