@@ -102,17 +102,96 @@ jQuery(document).ready(function($) {
     if (typeof apiNotification !== 'undefined') {
         var consent = getCookie('push_notification_consent');
         if (consent === 'accepted') {
-            showPushNotification(apiNotification);
+            var notificationKey = 'api_' + (apiNotification.timestamp || Date.now());
+            if (!localStorage.getItem('push_notification_shown_' + notificationKey)) {
+                showPushNotification(apiNotification);
+                localStorage.setItem('push_notification_shown_' + notificationKey, 'true');
+            }
         }
     }
 
-    // Show cart add notification if available
+    // Show cart add notification if available (for non-AJAX requests)
     if (typeof cartAddNotification !== 'undefined') {
+        console.log('Push Notification: Cart add notification found', cartAddNotification);
         var consent = getCookie('push_notification_consent');
         if (consent === 'accepted') {
-            showPushNotification(cartAddNotification);
+            console.log('Push Notification: User consented, showing cart notification');
+            var cartNotificationKey = 'cart_' + (cartAddNotification.timestamp || Date.now());
+            if (!localStorage.getItem('push_notification_shown_' + cartNotificationKey)) {
+                showPushNotification(cartAddNotification);
+                localStorage.setItem('push_notification_shown_' + cartNotificationKey, 'true');
+            }
+        } else {
+            console.log('Push Notification: User has not consented to notifications');
         }
+    } else {
+        console.log('Push Notification: No cart add notification found');
     }
+
+    // Show abandoned cart notification if available
+    if (typeof abandonedCartNotification !== 'undefined') {
+        console.log('Push Notification: Abandoned cart notification found', abandonedCartNotification);
+        var consent = getCookie('push_notification_consent');
+        if (consent === 'accepted') {
+            console.log('Push Notification: User consented, showing abandoned cart notification');
+            var abandonedKey = 'abandoned_' + (abandonedCartNotification.timestamp || Date.now());
+            if (!localStorage.getItem('push_notification_shown_' + abandonedKey)) {
+                showPushNotification(abandonedCartNotification);
+                localStorage.setItem('push_notification_shown_' + abandonedKey, 'true');
+            }
+        } else {
+            console.log('Push Notification: User has not consented to notifications');
+        }
+    } else {
+        console.log('Push Notification: No abandoned cart notification found');
+    }
+
+    // Listen for WooCommerce AJAX cart add events
+    // if (typeof jQuery !== 'undefined') {
+    //     jQuery(document).on('added_to_cart', function(event, fragments, cart_hash, button) {
+    //         console.log('Push Notification: WooCommerce added_to_cart event detected');
+    //         console.log('Push Notification: Full fragments object:', fragments);
+
+    //         // Check if notification data is in fragments
+    //         if (fragments && fragments.push_notification) {
+    //             console.log('Push Notification: Found notification in AJAX fragments', fragments.push_notification);
+    //             var consent = getCookie('push_notification_consent');
+    //             console.log('Push Notification: Consent cookie value:', consent);
+    //             if (consent === 'accepted') {
+    //                 console.log('Push Notification: User consented, showing AJAX cart notification');
+    //                 showPushNotification(fragments.push_notification);
+    //             } else {
+    //                 console.log('Push Notification: User has not consented to notifications');
+    //             }
+    //         } else {
+    //             console.log('Push Notification: No notification data in AJAX fragments');
+    //         }
+    //     });
+    // }
+
+    jQuery(document).on('added_to_cart', function(event, fragments, cart_hash, button) {
+        console.log('Push Notification:', typeof jQuery);
+        // console.log('fragments.push_notification:', fragments['div.widget_shopping_cart_content']);
+
+        // Check if notification data is in fragments
+        if (fragments && fragments.push_notification) {
+            console.log('Push Notification: Found notification in AJAX fragments', fragments.push_notification);
+            var consent = getCookie('push_notification_consent');
+            console.log('Push Notification: Consent cookie value:', consent);
+            if (consent === 'accepted') {
+                console.log('Push Notification: User consented, showing AJAX cart notification');
+                var ajaxNotificationKey = 'ajax_' + (fragments.push_notification.timestamp || Date.now());
+                if (!localStorage.getItem('push_notification_shown_' + ajaxNotificationKey)) {
+                    showPushNotification(fragments.push_notification);
+                    localStorage.setItem('push_notification_shown_' + ajaxNotificationKey, 'true');
+                }
+            } else {
+                console.log('Push Notification: User has not consented to notifications');
+            }
+        } else {
+            console.log('Push Notification: No notification data in AJAX fragments');
+        }
+    });
 
     // Handle button clicks for push notifications
     jQuery(document).on('click', '.push-notification-btn', function() {
@@ -170,6 +249,25 @@ jQuery(document).ready(function($) {
         }
         return sessionId;
     }
+
+    // Cleanup old notification tracking keys (keep only last 50)
+    function cleanupNotificationKeys() {
+        var keys = [];
+        for (var i = 0; i < localStorage.length; i++) {
+            var key = localStorage.key(i);
+            if (key && key.indexOf('push_notification_shown_') === 0) {
+                keys.push(key);
+            }
+        }
+        // Keep only the last 50 keys
+        if (keys.length > 50) {
+            keys.sort();
+            for (var j = 0; j < keys.length - 50; j++) {
+                localStorage.removeItem(keys[j]);
+            }
+        }
+    }
+    cleanupNotificationKeys();
 
     function sendEmailFallback(notificationId) {
         fetch('/wp-json/push-notification/v1/email-fallback', {

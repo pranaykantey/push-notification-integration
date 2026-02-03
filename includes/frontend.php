@@ -28,6 +28,7 @@ function push_notification_enqueue_scripts() {
     $api_data = get_transient('push_notification_api');
     if ($api_data) {
         wp_localize_script('push-notification-js', 'apiNotification', $api_data);
+        delete_transient('push_notification_api'); // Delete after reading to prevent duplicate notifications
     }
 
     // Check for user-specific cart add notification
@@ -37,6 +38,7 @@ function push_notification_enqueue_scripts() {
         $cart_notification = get_user_meta($user_id, '_push_notification_cart_add', true);
         if ($cart_notification) {
             delete_user_meta($user_id, '_push_notification_cart_add');
+            error_log('Push Notification: Retrieved cart notification from user meta for user ' . $user_id);
         }
     } else {
         if (!session_id()) {
@@ -45,11 +47,42 @@ function push_notification_enqueue_scripts() {
         if (isset($_SESSION['push_notification_cart_add'])) {
             $cart_notification = $_SESSION['push_notification_cart_add'];
             unset($_SESSION['push_notification_cart_add']);
+            error_log('Push Notification: Retrieved cart notification from session for anonymous user');
         }
     }
 
     if ($cart_notification) {
         wp_localize_script('push-notification-js', 'cartAddNotification', $cart_notification);
+        error_log('Push Notification: Localized cart notification for JavaScript');
+    }
+
+    // Check for abandoned cart notification
+    $user_id = get_current_user_id();
+    $abandoned_cart_notification = null;
+    
+    if ($user_id) {
+        $abandoned_cart_notification = get_transient('push_notification_abandoned_cart_' . $user_id);
+    } else {
+        if (!session_id()) {
+            session_start();
+        }
+        $session_id = session_id();
+        if ($session_id) {
+            $abandoned_cart_notification = get_transient('push_notification_abandoned_cart_session_' . $session_id);
+        }
+    }
+    
+    if ($abandoned_cart_notification) {
+        wp_localize_script('push-notification-js', 'abandonedCartNotification', $abandoned_cart_notification);
+        if ($user_id) {
+            delete_transient('push_notification_abandoned_cart_' . $user_id);
+        } else {
+            if (!session_id()) {
+                session_start();
+            }
+            $session_id = session_id();
+            delete_transient('push_notification_abandoned_cart_session_' . $session_id);
+        }
     }
 }
 

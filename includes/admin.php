@@ -14,6 +14,9 @@ function push_notification_register_settings() {
     register_setting('push_notification_settings', 'push_notification_supported_languages');
     register_setting('push_notification_settings', 'push_notification_woocommerce_cart_add');
     register_setting('push_notification_settings', 'push_notification_woocommerce_order_completed');
+    register_setting('push_notification_settings', 'push_notification_woocommerce_order_received');
+    register_setting('push_notification_settings', 'push_notification_abandoned_cart');
+    register_setting('push_notification_settings', 'push_notification_abandoned_cart_delay');
     register_setting('push_notification_settings', 'push_notification_post_exclude_author');
     register_setting('push_notification_settings', 'push_notification_post_target_roles');
     register_setting('push_notification_settings', 'push_notification_post_types');
@@ -33,6 +36,9 @@ function push_notification_register_settings() {
     add_settings_section('push_notification_automation', 'Automation Settings', null, 'push-notification-settings');
     add_settings_field('push_notification_woocommerce_cart_add', 'WooCommerce - Notify on cart add', 'push_notification_woocommerce_cart_add_field', 'push-notification-settings', 'push_notification_automation');
     add_settings_field('push_notification_woocommerce_order_completed', 'WooCommerce - Notify on order completed', 'push_notification_woocommerce_order_completed_field', 'push-notification-settings', 'push_notification_automation');
+    add_settings_field('push_notification_woocommerce_order_received', 'WooCommerce - Notify on order received', 'push_notification_woocommerce_order_received_field', 'push-notification-settings', 'push_notification_automation');
+    add_settings_field('push_notification_abandoned_cart', 'WooCommerce - Abandoned Cart Reminder', 'push_notification_abandoned_cart_field', 'push-notification-settings', 'push_notification_automation');
+    add_settings_field('push_notification_abandoned_cart_delay', 'Abandoned Cart Delay (hours)', 'push_notification_abandoned_cart_delay_field', 'push-notification-settings', 'push_notification_automation');
 
     add_settings_section('push_notification_crm', 'CRM Integration', null, 'push-notification-settings');
     add_settings_field('push_notification_mailchimp_api_key', 'Mailchimp API Key', 'push_notification_mailchimp_api_key_field', 'push-notification-settings', 'push_notification_crm');
@@ -476,6 +482,24 @@ function push_notification_woocommerce_order_completed_field() {
     $value = get_option('push_notification_woocommerce_order_completed', '1');
     echo '<input type="checkbox" name="push_notification_woocommerce_order_completed" value="1" ' . checked(1, $value, false) . ' /> Enable notifications when orders are completed';
     echo '<p class="description">Requires WooCommerce to be installed and active.</p>';
+}
+
+function push_notification_woocommerce_order_received_field() {
+    $value = get_option('push_notification_woocommerce_order_received', '1');
+    echo '<input type="checkbox" name="push_notification_woocommerce_order_received" value="1" ' . checked(1, $value, false) . ' /> Enable notifications when orders are received (processing/on-hold)';
+    echo '<p class="description">Requires WooCommerce to be installed and active.</p>';
+}
+
+function push_notification_abandoned_cart_field() {
+    $value = get_option('push_notification_abandoned_cart', '0');
+    echo '<input type="checkbox" name="push_notification_abandoned_cart" value="1" ' . checked(1, $value, false) . ' /> Enable abandoned cart reminders';
+    echo '<p class="description">Remind users about items left in their cart when they return to the site.</p>';
+}
+
+function push_notification_abandoned_cart_delay_field() {
+    $value = get_option('push_notification_abandoned_cart_delay', '1');
+    echo '<input type="number" name="push_notification_abandoned_cart_delay" value="' . esc_attr($value) . '" min="1" max="72" step="1" /> hours';
+    echo '<p class="description">How long to wait after cart activity before showing the reminder (1-72 hours).</p>';
 }
 
 function push_notification_add_sample_analytics_data() {
