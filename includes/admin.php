@@ -21,6 +21,10 @@ function push_notification_register_settings() {
     register_setting('push_notification_settings', 'push_notification_woocommerce_price_drop');
     register_setting('push_notification_settings', 'push_notification_woocommerce_back_in_stock');
     register_setting('push_notification_settings', 'push_notification_woocommerce_low_stock');
+    register_setting('push_notification_settings', 'push_notification_woocommerce_new_product');
+    register_setting('push_notification_settings', 'push_notification_woocommerce_sale_alert');
+    register_setting('push_notification_settings', 'push_notification_woocommerce_review_reminder');
+    register_setting('push_notification_settings', 'push_notification_woocommerce_coupon');
     register_setting('push_notification_settings', 'push_notification_post_exclude_author');
     register_setting('push_notification_settings', 'push_notification_post_target_roles');
     register_setting('push_notification_settings', 'push_notification_post_types');
@@ -47,6 +51,10 @@ function push_notification_register_settings() {
     add_settings_field('push_notification_woocommerce_price_drop', 'WooCommerce - Price Drop Alert', 'push_notification_woocommerce_price_drop_field', 'push-notification-settings', 'push_notification_automation');
     add_settings_field('push_notification_woocommerce_back_in_stock', 'WooCommerce - Back in Stock', 'push_notification_woocommerce_back_in_stock_field', 'push-notification-settings', 'push_notification_automation');
     add_settings_field('push_notification_woocommerce_low_stock', 'WooCommerce - Low Stock Alert (Admin)', 'push_notification_woocommerce_low_stock_field', 'push-notification-settings', 'push_notification_automation');
+    add_settings_field('push_notification_woocommerce_new_product', 'WooCommerce - New Product Launch', 'push_notification_woocommerce_new_product_field', 'push-notification-settings', 'push_notification_automation');
+    add_settings_field('push_notification_woocommerce_sale_alert', 'WooCommerce - Sale/Flash Sale Alert', 'push_notification_woocommerce_sale_alert_field', 'push-notification-settings', 'push_notification_automation');
+    add_settings_field('push_notification_woocommerce_review_reminder', 'WooCommerce - Review Reminder', 'push_notification_woocommerce_review_reminder_field', 'push-notification-settings', 'push_notification_automation');
+    add_settings_field('push_notification_woocommerce_coupon', 'WooCommerce - Coupon/Promotion', 'push_notification_woocommerce_coupon_field', 'push-notification-settings', 'push_notification_automation');
 
     add_settings_section('push_notification_crm', 'CRM Integration', null, 'push-notification-settings');
     add_settings_field('push_notification_mailchimp_api_key', 'Mailchimp API Key', 'push_notification_mailchimp_api_key_field', 'push-notification-settings', 'push_notification_crm');
@@ -532,6 +540,30 @@ function push_notification_woocommerce_low_stock_field() {
     $value = get_option('push_notification_woocommerce_low_stock', '0');
     echo '<input type="checkbox" name="push_notification_woocommerce_low_stock" value="1" ' . checked(1, $value, false) . ' /> Enable low stock alerts for admins';
     echo '<p class="description">Sends push notification to admins when product stock is running low. Requires WooCommerce.</p>';
+}
+
+function push_notification_woocommerce_new_product_field() {
+    $value = get_option('push_notification_woocommerce_new_product', '0');
+    echo '<input type="checkbox" name="push_notification_woocommerce_new_product" value="1" ' . checked(1, $value, false) . ' /> Enable new product launch notifications';
+    echo '<p class="description">Notifies users when new products are added. Supports category targeting. Requires WooCommerce.</p>';
+}
+
+function push_notification_woocommerce_sale_alert_field() {
+    $value = get_option('push_notification_woocommerce_sale_alert', '0');
+    echo '<input type="checkbox" name="push_notification_woocommerce_sale_alert" value="1" ' . checked(1, $value, false) . ' /> Enable sale/flash sale alerts';
+    echo '<p class="description">Notifies users about ongoing sales with countdown timer. Requires WooCommerce.</p>';
+}
+
+function push_notification_woocommerce_review_reminder_field() {
+    $value = get_option('push_notification_woocommerce_review_reminder', '0');
+    echo '<input type="checkbox" name="push_notification_woocommerce_review_reminder" value="1" ' . checked(1, $value, false) . ' /> Enable review reminder notifications';
+    echo '<p class="description">Reminds users to leave reviews after purchase. Requires WooCommerce.</p>';
+}
+
+function push_notification_woocommerce_coupon_field() {
+    $value = get_option('push_notification_woocommerce_coupon', '0');
+    echo '<input type="checkbox" name="push_notification_woocommerce_coupon" value="1" ' . checked(1, $value, false) . ' /> Enable coupon/promotion notifications';
+    echo '<p class="description">Send custom coupon codes and promotions to users. Requires WooCommerce.</p>';
 }
 
 function push_notification_add_sample_analytics_data() {

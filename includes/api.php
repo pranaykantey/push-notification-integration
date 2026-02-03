@@ -725,3 +725,146 @@ function push_notification_trigger($data) {
     set_transient('push_notification_api', $data, 300);
     do_action('push_notification_triggered', $data);
 }
+
+// New Product Launch Notification
+function push_notification_new_product($post_id, $post) {
+    if (!get_option('push_notification_woocommerce_new_product', '0')) {
+        return;
+    }
+
+    // Only trigger for new products being published
+    if ($post->post_type !== 'product' || $post->post_status !== 'publish') {
+        return;
+    }
+
+    // Check if this is a new product (not an update)
+    $product = wc_get_product($post_id);
+    if (!$product) {
+        return;
+    }
+
+    $product_name = $product->get_name();
+    $product_url = get_permalink($post_id);
+    $price = wc_price($product->get_price());
+
+    // Get product categories for targeting
+    $categories = get_the_terms($post_id, 'product_cat');
+    $category_names = array();
+    if ($categories && !is_wp_error($categories)) {
+        foreach ($categories as $category) {
+            $category_names[] = $category->name;
+        }
+    }
+
+    $category_text = !empty($category_names) ? ' in ' . implode(', ', $category_names) : '';
+
+    $data = array(
+        'title' => 'New Product Launch!',
+        'body' => 'Check out ' . $product_name . ' - Now available for ' . $price . $category_text,
+        'icon' => get_option('push_notification_icon', ''),
+        'action_title' => 'Shop Now',
+        'action_url' => $product_url,
+        'timestamp' => time()
+    );
+
+    set_transient('push_notification_api', $data, 300);
+    do_action('push_notification_triggered', $data);
+}
+
+// Sale/Flash Sale Alert Notification
+function push_notification_sale_alert($post_id, $post) {
+    if (!get_option('push_notification_woocommerce_sale_alert', '0')) {
+        return;
+    }
+
+    // Only trigger for products on sale
+    if ($post->post_type !== 'product' || $post->post_status !== 'publish') {
+        return;
+    }
+
+    $product = wc_get_product($post_id);
+    if (!$product || !$product->is_on_sale()) {
+        return;
+    }
+
+    $product_name = $product->get_name();
+    $regular_price = wc_price($product->get_regular_price());
+    $sale_price = wc_price($product->get_sale_price());
+    $discount = round(100 - ($product->get_sale_price() / $product->get_regular_price() * 100), 0);
+
+    $data = array(
+        'title' => '🔥 Flash Sale!',
+        'body' => $product_name . ' is ' . $discount . '% OFF! Was ' . $regular_price . ', now ' . $sale_price,
+        'icon' => get_option('push_notification_icon', ''),
+        'action_title' => 'Grab Deal',
+        'action_url' => get_permalink($post_id),
+        'timestamp' => time()
+    );
+
+    set_transient('push_notification_api', $data, 300);
+    do_action('push_notification_triggered', $data);
+}
+
+// Review Reminder Notification
+function push_notification_review_reminder($order_id, $old_status, $new_status, $order) {
+    if (!get_option('push_notification_woocommerce_review_reminder', '0')) {
+        return;
+    }
+
+    // Send review reminder when order is completed
+    if ($new_status === 'completed') {
+        $user_id = $order->get_user_id();
+        if (!$user_id) {
+            return;
+        }
+
+        $order_number = $order->get_order_number();
+
+        $data = array(
+            'title' => 'How was your purchase?',
+            'body' => 'Thanks for order #' . $order_number . '! We\'d love to hear your feedback.',
+            'icon' => get_option('push_notification_icon', ''),
+            'action_title' => 'Write Review',
+            'action_url' => wc_get_endpoint_url('orders', '', wc_get_page_permalink('myaccount')),
+            'timestamp' => time()
+        );
+
+        set_transient('push_notification_review_reminder_' . $user_id, $data, 300);
+    }
+}
+
+// Coupon/Promotion Notification
+function push_notification_send_coupon($coupon_code, $coupon_amount, $coupon_type, $coupon_description) {
+    if (!get_option('push_notification_woocommerce_coupon', '0')) {
+        return;
+    }
+
+    $coupon = new WC_Coupon($coupon_code);
+    if (!$coupon->get_id()) {
+        return;
+    }
+
+    $discount_text = '';
+    if ($coupon_type === 'percent') {
+        $discount_text = $coupon_amount . '% OFF';
+    } else {
+        $discount_text = wc_price($coupon_amount) . ' OFF';
+    }
+
+    $data = array(
+        'title' => '🎁 Special Offer!',
+        'body' => 'Use code ' . strtoupper($coupon_code) . ' for ' . $discount_text . '. ' . $coupon_description,
+        'icon' => get_option('push_notification_icon', ''),
+        'action_title' => 'Shop Now',
+        'action_url' => get_permalink(wc_get_page_id('shop')),
+        'timestamp' => time()
+    );
+
+    set_transient('push_notification_coupon', $data, 300);
+    do_action('push_notification_triggered', $data);
+}
+
+// Register new hooks for additional features
+add_action('publish_product', 'push_notification_new_product', 10, 2);
+add_action('save_post_product', 'push_notification_sale_alert', 10, 2);
+add_action('woocommerce_order_status_changed', 'push_notification_review_reminder', 10, 4);

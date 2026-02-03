@@ -188,6 +188,34 @@ jQuery(document).ready(function($) {
         }
     }
 
+    // Show review reminder notification if available
+    if (typeof reviewReminderNotification !== 'undefined') {
+        console.log('Push Notification: Review reminder notification found', reviewReminderNotification);
+        var consent = getCookie('push_notification_consent');
+        if (consent === 'accepted') {
+            console.log('Push Notification: User consented, showing review reminder notification');
+            var reviewKey = 'review_' + (reviewReminderNotification.timestamp || Date.now());
+            if (!localStorage.getItem('push_notification_shown_' + reviewKey)) {
+                showPushNotification(reviewReminderNotification);
+                localStorage.setItem('push_notification_shown_' + reviewKey, 'true');
+            }
+        }
+    }
+
+    // Show coupon notification if available
+    if (typeof couponNotification !== 'undefined') {
+        console.log('Push Notification: Coupon notification found', couponNotification);
+        var consent = getCookie('push_notification_consent');
+        if (consent === 'accepted') {
+            console.log('Push Notification: User consented, showing coupon notification');
+            var couponKey = 'coupon_' + (couponNotification.timestamp || Date.now());
+            if (!localStorage.getItem('push_notification_shown_' + couponKey)) {
+                showPushNotification(couponNotification);
+                localStorage.setItem('push_notification_shown_' + couponKey, 'true');
+            }
+        }
+    }
+
     // Listen for WooCommerce AJAX cart add events
     // if (typeof jQuery !== 'undefined') {
     //     jQuery(document).on('added_to_cart', function(event, fragments, cart_hash, button) {

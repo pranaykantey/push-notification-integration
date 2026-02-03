@@ -111,6 +111,22 @@ function push_notification_enqueue_scripts() {
             delete_transient('push_notification_low_stock_' . $user_id);
         }
     }
+
+    // Check for review reminder notification
+    if ($user_id && get_option('push_notification_woocommerce_review_reminder', '0')) {
+        $review_reminder_notification = get_transient('push_notification_review_reminder_' . $user_id);
+        if ($review_reminder_notification) {
+            wp_localize_script('push-notification-js', 'reviewReminderNotification', $review_reminder_notification);
+            delete_transient('push_notification_review_reminder_' . $user_id);
+        }
+    }
+
+    // Check for coupon notification
+    $coupon_notification = get_transient('push_notification_coupon');
+    if ($coupon_notification && get_option('push_notification_woocommerce_coupon', '0')) {
+        wp_localize_script('push-notification-js', 'couponNotification', $coupon_notification);
+        delete_transient('push_notification_coupon');
+    }
 }
 
 function push_notification_add_manifest() {
