@@ -17,6 +17,10 @@ function push_notification_register_settings() {
     register_setting('push_notification_settings', 'push_notification_woocommerce_order_received');
     register_setting('push_notification_settings', 'push_notification_abandoned_cart');
     register_setting('push_notification_settings', 'push_notification_abandoned_cart_delay');
+    register_setting('push_notification_settings', 'push_notification_woocommerce_order_shipped');
+    register_setting('push_notification_settings', 'push_notification_woocommerce_price_drop');
+    register_setting('push_notification_settings', 'push_notification_woocommerce_back_in_stock');
+    register_setting('push_notification_settings', 'push_notification_woocommerce_low_stock');
     register_setting('push_notification_settings', 'push_notification_post_exclude_author');
     register_setting('push_notification_settings', 'push_notification_post_target_roles');
     register_setting('push_notification_settings', 'push_notification_post_types');
@@ -39,6 +43,10 @@ function push_notification_register_settings() {
     add_settings_field('push_notification_woocommerce_order_received', 'WooCommerce - Notify on order received', 'push_notification_woocommerce_order_received_field', 'push-notification-settings', 'push_notification_automation');
     add_settings_field('push_notification_abandoned_cart', 'WooCommerce - Abandoned Cart Reminder', 'push_notification_abandoned_cart_field', 'push-notification-settings', 'push_notification_automation');
     add_settings_field('push_notification_abandoned_cart_delay', 'Abandoned Cart Delay (hours)', 'push_notification_abandoned_cart_delay_field', 'push-notification-settings', 'push_notification_automation');
+    add_settings_field('push_notification_woocommerce_order_shipped', 'WooCommerce - Notify on order shipped', 'push_notification_woocommerce_order_shipped_field', 'push-notification-settings', 'push_notification_automation');
+    add_settings_field('push_notification_woocommerce_price_drop', 'WooCommerce - Price Drop Alert', 'push_notification_woocommerce_price_drop_field', 'push-notification-settings', 'push_notification_automation');
+    add_settings_field('push_notification_woocommerce_back_in_stock', 'WooCommerce - Back in Stock', 'push_notification_woocommerce_back_in_stock_field', 'push-notification-settings', 'push_notification_automation');
+    add_settings_field('push_notification_woocommerce_low_stock', 'WooCommerce - Low Stock Alert (Admin)', 'push_notification_woocommerce_low_stock_field', 'push-notification-settings', 'push_notification_automation');
 
     add_settings_section('push_notification_crm', 'CRM Integration', null, 'push-notification-settings');
     add_settings_field('push_notification_mailchimp_api_key', 'Mailchimp API Key', 'push_notification_mailchimp_api_key_field', 'push-notification-settings', 'push_notification_crm');
@@ -500,6 +508,30 @@ function push_notification_abandoned_cart_delay_field() {
     $value = get_option('push_notification_abandoned_cart_delay', '1');
     echo '<input type="number" name="push_notification_abandoned_cart_delay" value="' . esc_attr($value) . '" min="1" max="72" step="1" /> hours';
     echo '<p class="description">How long to wait after cart activity before showing the reminder (1-72 hours).</p>';
+}
+
+function push_notification_woocommerce_order_shipped_field() {
+    $value = get_option('push_notification_woocommerce_order_shipped', '1');
+    echo '<input type="checkbox" name="push_notification_woocommerce_order_shipped" value="1" ' . checked(1, $value, false) . ' /> Enable notifications when orders are shipped';
+    echo '<p class="description">Includes tracking information when available. Requires WooCommerce.</p>';
+}
+
+function push_notification_woocommerce_price_drop_field() {
+    $value = get_option('push_notification_woocommerce_price_drop', '0');
+    echo '<input type="checkbox" name="push_notification_woocommerce_price_drop" value="1" ' . checked(1, $value, false) . ' /> Enable price drop alerts for wishlisted products';
+    echo '<p class="description">Notifies users when products in their wishlist go on sale. Requires WooCommerce.</p>';
+}
+
+function push_notification_woocommerce_back_in_stock_field() {
+    $value = get_option('push_notification_woocommerce_back_in_stock', '0');
+    echo '<input type="checkbox" name="push_notification_woocommerce_back_in_stock" value="1" ' . checked(1, $value, false) . ' /> Enable back in stock notifications';
+    echo '<p class="description">Notifies users when out-of-stock products they subscribed to are restocked. Requires WooCommerce.</p>';
+}
+
+function push_notification_woocommerce_low_stock_field() {
+    $value = get_option('push_notification_woocommerce_low_stock', '0');
+    echo '<input type="checkbox" name="push_notification_woocommerce_low_stock" value="1" ' . checked(1, $value, false) . ' /> Enable low stock alerts for admins';
+    echo '<p class="description">Sends push notification to admins when product stock is running low. Requires WooCommerce.</p>';
 }
 
 function push_notification_add_sample_analytics_data() {

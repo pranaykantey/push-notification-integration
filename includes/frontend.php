@@ -84,6 +84,33 @@ function push_notification_enqueue_scripts() {
             delete_transient('push_notification_abandoned_cart_session_' . $session_id);
         }
     }
+
+    // Check for price drop notification
+    if ($user_id && get_option('push_notification_woocommerce_price_drop', '0')) {
+        $price_drop_notification = get_transient('push_notification_price_drop_' . $user_id);
+        if ($price_drop_notification) {
+            wp_localize_script('push-notification-js', 'priceDropNotification', $price_drop_notification);
+            delete_transient('push_notification_price_drop_' . $user_id);
+        }
+    }
+
+    // Check for back in stock notification
+    if ($user_id && get_option('push_notification_woocommerce_back_in_stock', '0')) {
+        $back_in_stock_notification = get_transient('push_notification_back_in_stock_' . $user_id);
+        if ($back_in_stock_notification) {
+            wp_localize_script('push-notification-js', 'backInStockNotification', $back_in_stock_notification);
+            delete_transient('push_notification_back_in_stock_' . $user_id);
+        }
+    }
+
+    // Check for low stock alert (for admins only)
+    if ($user_id && current_user_can('manage_options') && get_option('push_notification_woocommerce_low_stock', '0')) {
+        $low_stock_notification = get_transient('push_notification_low_stock_' . $user_id);
+        if ($low_stock_notification) {
+            wp_localize_script('push-notification-js', 'lowStockNotification', $low_stock_notification);
+            delete_transient('push_notification_low_stock_' . $user_id);
+        }
+    }
 }
 
 function push_notification_add_manifest() {

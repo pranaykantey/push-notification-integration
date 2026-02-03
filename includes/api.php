@@ -104,6 +104,10 @@ function push_notification_woocommerce_integration() {
         add_action('woocommerce_add_to_cart', 'push_notification_cart_add', 10, 6);
         add_action('woocommerce_cart_updated', 'push_notification_track_cart_activity');
         add_action('wp_footer', 'push_notification_check_abandoned_cart');
+        add_action('woocommerce_order_status_shipped', 'push_notification_order_shipped', 10, 2);
+        add_action('post_updated', 'push_notification_check_price_drop', 10, 3);
+        add_action('woocommerce_product_set_stock_status', 'push_notification_stock_status_changed', 10, 3);
+        add_action('woocommerce_low_stock', 'push_notification_low_stock');
         add_filter('woocommerce_add_to_cart_fragments', 'push_notification_add_to_cart_fragments', 10, 1);
 
     } else {
@@ -360,6 +364,233 @@ function push_notification_order_status_changed($order_id, $old_status, $new_sta
 
         set_transient('push_notification_api', $data, 300);
         do_action('push_notification_triggered', $data);
+    }
+}
+
+// Order Shipped Notification
+function push_notification_order_shipped($order_id, $order) {
+    if (!get_option('push_notification_woocommerce_order_shipped', '1')) {
+        return;
+    }
+
+    // Get tracking info if available
+    $tracking_number = '';
+    $tracking_url = '';
+    $tracking_provider = '';
+
+    // Check for common shipping plugins
+    if (function_exists('wc_st_add_tracking_number')) {
+        $tracking_number = get_post_meta($order_id, '_tracking_number', true);
+        $tracking_provider = get_post_meta($order_id, '_tracking_provider', true);
+    }
+
+    // Build body message
+    $body = 'Your order #' . $order_id . ' has been shipped!';
+    if ($tracking_number) {
+        $body .= ' Tracking: ' . $tracking_number;
+    }
+
+    $data = array(
+        'title' => 'Order Shipped',
+        'body' => $body,
+        'icon' => get_option('push_notification_icon', ''),
+        'action_title' => 'Track Order',
+        'action_url' => $order->get_view_order_url()
+    );
+
+    set_transient('push_notification_api', $data, 300);
+    do_action('push_notification_triggered', $data);
+}
+
+// Price Drop Alert for Wishlist Products
+function push_notification_check_price_drop($post_id, $post_after, $post_before) {
+    if (!get_option('push_notification_woocommerce_price_drop', '0')) {
+        return;
+    }
+
+    // Only check products
+    if ($post_after->post_type !== 'product') {
+        return;
+    }
+
+    $product = wc_get_product($post_id);
+    if (!$product) {
+        return;
+    }
+
+    $new_price = $product->get_price();
+    $old_price = get_post_meta($post_id, '_push_notification_last_price', true);
+
+    // Store current price for future comparison
+    update_post_meta($post_id, '_push_notification_last_price', $new_price);
+
+    // Skip if no old price or price didn't drop
+    if (!$old_price || $new_price >= $old_price) {
+        return;
+    }
+
+    // Calculate discount
+    $discount_percent = round(100 - ($new_price / $old_price * 100), 1);
+
+    // Find users with this product in wishlist
+    // Support for YITH Wishlist, WooCommerce Wishlist, and default meta
+    $user_ids = array();
+
+    // Check YITH Wishlist
+    if (class_exists('YITH_WCWL')) {
+        global $wpdb;
+        $wishlist_items = $wpdb->get_results($wpdb->prepare(
+            "SELECT user_id FROM {$wpdb->prefix}yith_wcwl WHERE prod_id = %d AND user_id != 0",
+            $post_id
+        ));
+        foreach ($wishlist_items as $item) {
+            $user_ids[] = $item->user_id;
+        }
+    }
+
+    // Check for users who clicked "Add to Wishlist" button (stores in meta)
+    $wishlist_meta_users = get_posts(array(
+        'post_type' => 'push_notification_wishlist',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            array(
+                'key' => '_wishlist_product_id',
+                'value' => $post_id
+            )
+        )
+    ));
+
+    foreach ($wishlist_meta_users as $wishlist_post) {
+        $user_ids[] = $wishlist_post->post_author;
+    }
+
+    // Remove duplicates
+    $user_ids = array_unique($user_ids);
+
+    // Notify each user
+    foreach ($user_ids as $user_id) {
+        $user = get_user_by('id', $user_id);
+        if (!$user) continue;
+
+        $data = array(
+            'title' => 'Price Drop!',
+            'body' => $product->get_name() . ' is now ' . wc_price($new_price) . ' (was ' . wc_price($old_price) . '). Save ' . $discount_percent . '%!',
+            'icon' => get_option('push_notification_icon', ''),
+            'action_title' => 'View Product',
+            'action_url' => get_permalink($post_id),
+            'timestamp' => time()
+        );
+
+        set_transient('push_notification_price_drop_' . $user_id, $data, 300);
+    }
+}
+
+// Back in Stock Notification
+function push_notification_stock_status_changed($product_id, $status, $product) {
+    if (!get_option('push_notification_woocommerce_back_in_stock', '0')) {
+        return;
+    }
+
+    if ($status !== 'instock') {
+        return;
+    }
+
+    // Find users who subscribed to back in stock notifications
+    $user_ids = array();
+
+    // Check WooCommerce native back in stock subscriptions
+    $subscriptions = get_posts(array(
+        'post_type' => 'shop_subscription',
+        'posts_per_page' => -1,
+        'post_status' => 'publish',
+        'meta_query' => array(
+            array(
+                'key' => '_product_id',
+                'value' => $product_id
+            )
+        )
+    ));
+
+    foreach ($subscriptions as $subscription) {
+        $user_ids[] = $subscription->post_author;
+    }
+
+    // Also check custom meta for back in stock subscribers
+    $stock_subscribers = get_posts(array(
+        'post_type' => 'push_notification_stock_sub',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            array(
+                'key' => '_stock_product_id',
+                'value' => $product_id
+            ),
+            array(
+                'key' => '_stock_notified',
+                'compare' => 'NOT EXISTS'
+            )
+        )
+    ));
+
+    foreach ($stock_subscribers as $subscriber) {
+        $email = get_post_meta($subscriber->ID, '_stock_email', true);
+        if ($email) {
+            $user = get_user_by('email', $email);
+            if ($user) {
+                $user_ids[] = $user->ID;
+            }
+        }
+        // Mark as notified
+        update_post_meta($subscriber->ID, '_stock_notified', '1');
+    }
+
+    // Remove duplicates
+    $user_ids = array_unique($user_ids);
+
+    // Notify each user
+    foreach ($user_ids as $user_id) {
+        $user = get_user_by('id', $user_id);
+        if (!$user) continue;
+
+        $data = array(
+            'title' => 'Back in Stock!',
+            'body' => $product->get_name() . ' is back in stock! Don\'t miss out.',
+            'icon' => get_option('push_notification_icon', ''),
+            'action_title' => 'Buy Now',
+            'action_url' => get_permalink($product_id),
+            'timestamp' => time()
+        );
+
+        set_transient('push_notification_back_in_stock_' . $user_id, $data, 300);
+    }
+}
+
+// Low Stock Alert (Admin Notification)
+function push_notification_low_stock($product) {
+    if (!get_option('push_notification_woocommerce_low_stock', '0')) {
+        return;
+    }
+
+    $product_id = $product->get_id();
+    $product_name = $product->get_name();
+    $stock = $product->get_stock_quantity();
+
+    // Get admin users
+    $admin_users = get_users(array(
+        'role' => 'administrator',
+        'fields' => 'ID'
+    ));
+
+    foreach ($admin_users as $admin_id) {
+        $data = array(
+            'title' => 'Low Stock Alert',
+            'body' => $product_name . ' is running low on stock. Current quantity: ' . $stock,
+            'icon' => get_option('push_notification_icon', ''),
+            'action_title' => 'Edit Product',
+            'action_url' => get_edit_post_link($product_id),
+            'timestamp' => time()
+        );
+
+        set_transient('push_notification_low_stock_' . $admin_id, $data, 300);
     }
 }
 

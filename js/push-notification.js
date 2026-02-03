@@ -146,6 +146,48 @@ jQuery(document).ready(function($) {
         console.log('Push Notification: No abandoned cart notification found');
     }
 
+    // Show price drop notification if available
+    if (typeof priceDropNotification !== 'undefined') {
+        console.log('Push Notification: Price drop notification found', priceDropNotification);
+        var consent = getCookie('push_notification_consent');
+        if (consent === 'accepted') {
+            console.log('Push Notification: User consented, showing price drop notification');
+            var priceKey = 'price_' + (priceDropNotification.timestamp || Date.now());
+            if (!localStorage.getItem('push_notification_shown_' + priceKey)) {
+                showPushNotification(priceDropNotification);
+                localStorage.setItem('push_notification_shown_' + priceKey, 'true');
+            }
+        }
+    }
+
+    // Show back in stock notification if available
+    if (typeof backInStockNotification !== 'undefined') {
+        console.log('Push Notification: Back in stock notification found', backInStockNotification);
+        var consent = getCookie('push_notification_consent');
+        if (consent === 'accepted') {
+            console.log('Push Notification: User consented, showing back in stock notification');
+            var stockKey = 'stock_' + (backInStockNotification.timestamp || Date.now());
+            if (!localStorage.getItem('push_notification_shown_' + stockKey)) {
+                showPushNotification(backInStockNotification);
+                localStorage.setItem('push_notification_shown_' + stockKey, 'true');
+            }
+        }
+    }
+
+    // Show low stock notification if available (admin only)
+    if (typeof lowStockNotification !== 'undefined') {
+        console.log('Push Notification: Low stock notification found', lowStockNotification);
+        var consent = getCookie('push_notification_consent');
+        if (consent === 'accepted') {
+            console.log('Push Notification: User consented, showing low stock notification');
+            var lowStockKey = 'lowstock_' + (lowStockNotification.timestamp || Date.now());
+            if (!localStorage.getItem('push_notification_shown_' + lowStockKey)) {
+                showPushNotification(lowStockNotification);
+                localStorage.setItem('push_notification_shown_' + lowStockKey, 'true');
+            }
+        }
+    }
+
     // Listen for WooCommerce AJAX cart add events
     // if (typeof jQuery !== 'undefined') {
     //     jQuery(document).on('added_to_cart', function(event, fragments, cart_hash, button) {
