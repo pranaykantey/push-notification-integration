@@ -656,4 +656,4 @@ GNU General Public License for more details.
 
 **Thank you for choosing Push Notification Integration!** 🎉
 
-For more information, visit the [ThemeForest item page](https://themeforest.net/item/push-notification-integration/123456789).
+For more information, visit the [ThemeForest item page](https://demo.net/item).
