@@ -25,6 +25,12 @@ function push_notification_register_settings() {
     register_setting('push_notification_settings', 'push_notification_woocommerce_sale_alert');
     register_setting('push_notification_settings', 'push_notification_woocommerce_review_reminder');
     register_setting('push_notification_settings', 'push_notification_woocommerce_coupon');
+    register_setting('push_notification_settings', 'push_notification_woocommerce_restock_priority');
+    register_setting('push_notification_settings', 'push_notification_woocommerce_payment_failed');
+    register_setting('push_notification_settings', 'push_notification_woocommerce_wishlist_alert');
+    register_setting('push_notification_settings', 'push_notification_woocommerce_weather_promo');
+    register_setting('push_notification_settings', 'push_notification_woocommerce_time_offer');
+    register_setting('push_notification_settings', 'push_notification_woocommerce_holiday');
     register_setting('push_notification_settings', 'push_notification_post_exclude_author');
     register_setting('push_notification_settings', 'push_notification_post_target_roles');
     register_setting('push_notification_settings', 'push_notification_post_types');
@@ -55,6 +61,12 @@ function push_notification_register_settings() {
     add_settings_field('push_notification_woocommerce_sale_alert', 'WooCommerce - Sale/Flash Sale Alert', 'push_notification_woocommerce_sale_alert_field', 'push-notification-settings', 'push_notification_automation');
     add_settings_field('push_notification_woocommerce_review_reminder', 'WooCommerce - Review Reminder', 'push_notification_woocommerce_review_reminder_field', 'push-notification-settings', 'push_notification_automation');
     add_settings_field('push_notification_woocommerce_coupon', 'WooCommerce - Coupon/Promotion', 'push_notification_woocommerce_coupon_field', 'push-notification-settings', 'push_notification_automation');
+    add_settings_field('push_notification_woocommerce_restock_priority', 'WooCommerce - Restock Priority (Cart Abandoners)', 'push_notification_woocommerce_restock_priority_field', 'push-notification-settings', 'push_notification_automation');
+    add_settings_field('push_notification_woocommerce_payment_failed', 'WooCommerce - Payment Failed Recovery', 'push_notification_woocommerce_payment_failed_field', 'push-notification-settings', 'push_notification_automation');
+    add_settings_field('push_notification_woocommerce_wishlist_alert', 'WooCommerce - Wishlist Sale + Stock Alert', 'push_notification_woocommerce_wishlist_alert_field', 'push-notification-settings', 'push_notification_automation');
+    add_settings_field('push_notification_woocommerce_weather_promo', 'WooCommerce - Weather-based Promotions', 'push_notification_woocommerce_weather_promo_field', 'push-notification-settings', 'push_notification_automation');
+    add_settings_field('push_notification_woocommerce_time_offer', 'WooCommerce - Time-based Flash Sales', 'push_notification_woocommerce_time_offer_field', 'push-notification-settings', 'push_notification_automation');
+    add_settings_field('push_notification_woocommerce_holiday', 'WooCommerce - Holiday/Seasonal Campaigns', 'push_notification_woocommerce_holiday_field', 'push-notification-settings', 'push_notification_automation');
 
     add_settings_section('push_notification_crm', 'CRM Integration', null, 'push-notification-settings');
     add_settings_field('push_notification_mailchimp_api_key', 'Mailchimp API Key', 'push_notification_mailchimp_api_key_field', 'push-notification-settings', 'push_notification_crm');
@@ -564,6 +576,42 @@ function push_notification_woocommerce_coupon_field() {
     $value = get_option('push_notification_woocommerce_coupon', '0');
     echo '<input type="checkbox" name="push_notification_woocommerce_coupon" value="1" ' . checked(1, $value, false) . ' /> Enable coupon/promotion notifications';
     echo '<p class="description">Send custom coupon codes and promotions to users. Requires WooCommerce.</p>';
+}
+
+function push_notification_woocommerce_restock_priority_field() {
+    $value = get_option('push_notification_woocommerce_restock_priority', '0');
+    echo '<input type="checkbox" name="push_notification_woocommerce_restock_priority" value="1" ' . checked(1, $value, false) . ' /> Enable priority restock notifications';
+    echo '<p class="description">Give cart abandoners priority when products come back in stock. Requires WooCommerce.</p>';
+}
+
+function push_notification_woocommerce_payment_failed_field() {
+    $value = get_option('push_notification_woocommerce_payment_failed', '0');
+    echo '<input type="checkbox" name="push_notification_woocommerce_payment_failed" value="1" ' . checked(1, $value, false) . ' /> Enable payment failed recovery';
+    echo '<p class="description">Notify users when payment fails with quick retry link. Requires WooCommerce.</p>';
+}
+
+function push_notification_woocommerce_wishlist_alert_field() {
+    $value = get_option('push_notification_woocommerce_wishlist_alert', '0');
+    echo '<input type="checkbox" name="push_notification_woocommerce_wishlist_alert" value="1" ' . checked(1, $value, false) . ' /> Enable wishlist sale + stock alerts';
+    echo '<p class="description">Notify when wishlist items are both back in stock AND on sale. Requires WooCommerce.</p>';
+}
+
+function push_notification_woocommerce_weather_promo_field() {
+    $value = get_option('push_notification_woocommerce_weather_promo', '0');
+    echo '<input type="checkbox" name="push_notification_woocommerce_weather_promo" value="1" ' . checked(1, $value, false) . ' /> Enable weather-based promotions';
+    echo '<p class="description">Send relevant promotions based on local weather conditions. Requires weather API. Requires WooCommerce.</p>';
+}
+
+function push_notification_woocommerce_time_offer_field() {
+    $value = get_option('push_notification_woocommerce_time_offer', '0');
+    echo '<input type="checkbox" name="push_notification_woocommerce_time_offer" value="1" ' . checked(1, $value, false) . ' /> Enable time-based flash sales';
+    echo '<p class="description">Flash sales with countdown timer. Shows time-limited offers. Requires WooCommerce.</p>';
+}
+
+function push_notification_woocommerce_holiday_field() {
+    $value = get_option('push_notification_woocommerce_holiday', '0');
+    echo '<input type="checkbox" name="push_notification_woocommerce_holiday" value="1" ' . checked(1, $value, false) . ' /> Enable holiday/seasonal campaigns';
+    echo '<p class="description">Pre-scheduled notifications for major holidays like Black Friday, Christmas, etc. Requires WooCommerce.</p>';
 }
 
 function push_notification_add_sample_analytics_data() {

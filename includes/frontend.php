@@ -127,6 +127,58 @@ function push_notification_enqueue_scripts() {
         wp_localize_script('push-notification-js', 'couponNotification', $coupon_notification);
         delete_transient('push_notification_coupon');
     }
+
+    // Check for restock priority notification
+    if ($user_id && get_option('push_notification_woocommerce_restock_priority', '0')) {
+        $restock_priority_notification = get_transient('push_notification_restock_priority_' . $user_id);
+        if ($restock_priority_notification) {
+            wp_localize_script('push-notification-js', 'restockPriorityNotification', $restock_priority_notification);
+            delete_transient('push_notification_restock_priority_' . $user_id);
+        }
+    }
+
+    // Check for payment failed notification
+    if ($user_id && get_option('push_notification_woocommerce_payment_failed', '0')) {
+        $payment_failed_notification = get_transient('push_notification_payment_failed_' . $user_id);
+        if ($payment_failed_notification) {
+            wp_localize_script('push-notification-js', 'paymentFailedNotification', $payment_failed_notification);
+            delete_transient('push_notification_payment_failed_' . $user_id);
+        }
+    }
+
+    // Check for wishlist sale + stock alert
+    if ($user_id && get_option('push_notification_woocommerce_wishlist_alert', '0')) {
+        $wishlist_alert_notification = get_transient('push_notification_wishlist_alert_' . $user_id);
+        if ($wishlist_alert_notification) {
+            wp_localize_script('push-notification-js', 'wishlistAlertNotification', $wishlist_alert_notification);
+            delete_transient('push_notification_wishlist_alert_' . $user_id);
+        }
+    }
+
+    // Check for weather-based promo
+    $weather_promo_notification = get_transient('push_notification_weather_promo');
+    if ($weather_promo_notification && get_option('push_notification_woocommerce_weather_promo', '0')) {
+        wp_localize_script('push-notification-js', 'weatherPromoNotification', $weather_promo_notification);
+        delete_transient('push_notification_weather_promo');
+    }
+
+    // Check for time-based offer
+    $time_offer_notification = get_transient('push_notification_time_offer');
+    if ($time_offer_notification && get_option('push_notification_woocommerce_time_offer', '0')) {
+        wp_localize_script('push-notification-js', 'timeOfferNotification', $time_offer_notification);
+        delete_transient('push_notification_time_offer');
+    }
+
+    // Check for holiday campaign
+    $holiday_campaigns = array('black_friday', 'christmas', 'new_year', 'valentine', 'summer', 'general');
+    foreach ($holiday_campaigns as $holiday) {
+        $holiday_notification = get_transient('push_notification_holiday_' . $holiday);
+        if ($holiday_notification && get_option('push_notification_woocommerce_holiday', '0')) {
+            wp_localize_script('push-notification-js', 'holidayNotification', $holiday_notification);
+            delete_transient('push_notification_holiday_' . $holiday);
+            break; // Only show one holiday notification
+        }
+    }
 }
 
 function push_notification_add_manifest() {

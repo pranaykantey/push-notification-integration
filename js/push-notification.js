@@ -216,6 +216,90 @@ jQuery(document).ready(function($) {
         }
     }
 
+    // Show restock priority notification if available
+    if (typeof restockPriorityNotification !== 'undefined') {
+        console.log('Push Notification: Restock priority notification found', restockPriorityNotification);
+        var consent = getCookie('push_notification_consent');
+        if (consent === 'accepted') {
+            console.log('Push Notification: User consented, showing restock priority notification');
+            var restockKey = 'restock_' + (restockPriorityNotification.timestamp || Date.now());
+            if (!localStorage.getItem('push_notification_shown_' + restockKey)) {
+                showPushNotification(restockPriorityNotification);
+                localStorage.setItem('push_notification_shown_' + restockKey, 'true');
+            }
+        }
+    }
+
+    // Show payment failed notification if available
+    if (typeof paymentFailedNotification !== 'undefined') {
+        console.log('Push Notification: Payment failed notification found', paymentFailedNotification);
+        var consent = getCookie('push_notification_consent');
+        if (consent === 'accepted') {
+            console.log('Push Notification: User consented, showing payment failed notification');
+            var failedKey = 'failed_' + (paymentFailedNotification.timestamp || Date.now());
+            if (!localStorage.getItem('push_notification_shown_' + failedKey)) {
+                showPushNotification(paymentFailedNotification);
+                localStorage.setItem('push_notification_shown_' + failedKey, 'true');
+            }
+        }
+    }
+
+    // Show wishlist alert notification if available
+    if (typeof wishlistAlertNotification !== 'undefined') {
+        console.log('Push Notification: Wishlist alert notification found', wishlistAlertNotification);
+        var consent = getCookie('push_notification_consent');
+        if (consent === 'accepted') {
+            console.log('Push Notification: User consented, showing wishlist alert notification');
+            var wishlistKey = 'wishlist_' + (wishlistAlertNotification.timestamp || Date.now());
+            if (!localStorage.getItem('push_notification_shown_' + wishlistKey)) {
+                showPushNotification(wishlistAlertNotification);
+                localStorage.setItem('push_notification_shown_' + wishlistKey, 'true');
+            }
+        }
+    }
+
+    // Show weather promo notification if available
+    if (typeof weatherPromoNotification !== 'undefined') {
+        console.log('Push Notification: Weather promo notification found', weatherPromoNotification);
+        var consent = getCookie('push_notification_consent');
+        if (consent === 'accepted') {
+            console.log('Push Notification: User consented, showing weather promo notification');
+            var weatherKey = 'weather_' + (weatherPromoNotification.timestamp || Date.now());
+            if (!localStorage.getItem('push_notification_shown_' + weatherKey)) {
+                showPushNotification(weatherPromoNotification);
+                localStorage.setItem('push_notification_shown_' + weatherKey, 'true');
+            }
+        }
+    }
+
+    // Show time offer notification if available
+    if (typeof timeOfferNotification !== 'undefined') {
+        console.log('Push Notification: Time offer notification found', timeOfferNotification);
+        var consent = getCookie('push_notification_consent');
+        if (consent === 'accepted') {
+            console.log('Push Notification: User consented, showing time offer notification');
+            var timeKey = 'time_' + (timeOfferNotification.timestamp || Date.now());
+            if (!localStorage.getItem('push_notification_shown_' + timeKey)) {
+                showPushNotification(timeOfferNotification);
+                localStorage.setItem('push_notification_shown_' + timeKey, 'true');
+            }
+        }
+    }
+
+    // Show holiday notification if available
+    if (typeof holidayNotification !== 'undefined') {
+        console.log('Push Notification: Holiday notification found', holidayNotification);
+        var consent = getCookie('push_notification_consent');
+        if (consent === 'accepted') {
+            console.log('Push Notification: User consented, showing holiday notification');
+            var holidayKey = 'holiday_' + (holidayNotification.timestamp || Date.now());
+            if (!localStorage.getItem('push_notification_shown_' + holidayKey)) {
+                showPushNotification(holidayNotification);
+                localStorage.setItem('push_notification_shown_' + holidayKey, 'true');
+            }
+        }
+    }
+
     // Listen for WooCommerce AJAX cart add events
     // if (typeof jQuery !== 'undefined') {
     //     jQuery(document).on('added_to_cart', function(event, fragments, cart_hash, button) {

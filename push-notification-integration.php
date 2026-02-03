@@ -33,6 +33,7 @@ require_once plugin_dir_path(__FILE__) . 'includes/post-type.php';
 require_once plugin_dir_path(__FILE__) . 'includes/shortcodes.php';
 require_once plugin_dir_path(__FILE__) . 'includes/activation.php';
 require_once plugin_dir_path(__FILE__) . 'includes/api.php';
+require_once plugin_dir_path(__FILE__) . 'includes/api_new_features.php';
 if (did_action('elementor/loaded')) {
     require_once plugin_dir_path(__FILE__) . 'includes/elementor-widget.php';
 }
