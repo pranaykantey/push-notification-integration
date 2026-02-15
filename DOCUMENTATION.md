@@ -18,6 +18,7 @@ A comprehensive WordPress plugin for sending rich, interactive push notification
 - [Advanced Features](#-advanced-features)
 - [API Reference](#-api-reference)
 - [Troubleshooting](#-troubleshooting)
+- [Comparison](#-comparison)
 - [Changelog](#-changelog)
 - [Credits](#-credits)
 
@@ -573,6 +574,33 @@ Solution: Check for HTTPS and clear browser cache
 ```
 Solution: User must click "Allow" on consent banner
 ```
+
+## 📊 Comparison
+
+### How We Compare to Competitors
+
+See our detailed [Plugin Comparison](COMPARISON.md) for a full analysis of how Push Notification Integration compares to other popular WordPress push notification plugins including OneSignal, PushEngage, WP Web Push, and Firebase Cloud Messaging.
+
+#### Quick Comparison
+
+| Feature | Our Plugin | OneSignal | PushEngage | WP Web Push |
+|---------|-----------|-----------|------------|-------------|
+| **WooCommerce Integration** | 14+ types | Basic | Advanced | ❌ |
+| **Analytics Dashboard** | ✅ | ✅ | ✅ | Basic |
+| **A/B Testing** | ✅ | ✅ | ✅ | ❌ |
+| **Free Version** | ❌ | ✅ | Limited | ✅ |
+| **Weather-based Promo** | ✅ | ❌ | ❌ | ❌ |
+| **Holiday Campaigns** | ✅ | ❌ | ❌ | ❌ |
+
+#### Why Choose Us?
+
+1. **Most Comprehensive WooCommerce Suite** - 14+ specialized e-commerce notification types
+2. **Unique Features** - Weather promotions, holiday campaigns, restock priority alerts
+3. **All-in-One Solution** - No external services or accounts required
+4. **Developer Friendly** - 50+ hooks, REST API, extensive documentation
+5. **Competitive Pricing** - More features for the price compared to competitors
+
+See [Full Comparison](COMPARISON.md) for detailed analysis.
 
 ## 📝 Changelog
 

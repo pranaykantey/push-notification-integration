@@ -93,6 +93,11 @@ Yes! The plugin includes comprehensive WooCommerce integration with 14+ notifica
 
 Go to Settings > Push Notifications > WooCommerce and enable the notification types you want. Each feature can be enabled/disabled individually.
 
+= How does this plugin compare to others? =
+
+See our detailed [Plugin Comparison](COMPARISON.md) for a full analysis. Our plugin offers the most comprehensive WooCommerce integration with 14+ notification types, unique features like weather-based promotions and holiday campaigns, and competitive pricing compared to OneSignal, PushEngage, and other alternatives.
+
+
 == Screenshots ==
 
 1. Analytics dashboard showing performance metrics
